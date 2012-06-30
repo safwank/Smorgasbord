@@ -29,7 +29,7 @@ app.configure('production', function(){
 });
 
 app.helpers({
-    title: 'Node-Neo4j Template'    // default title
+    title: 'Smorgasbord'
 });
 
 // Routes

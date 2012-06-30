@@ -1,7 +1,7 @@
-{ "name": "NodeNeo4jTemplate"
-  , "description": "A sample Node.js + Neo4j app."
+{ "name": "Smorgasbord"
+  , "description": "MYOB coding co-opetition"
   , "version": "0.0.1"
-  , "author": "Aseem Kishore <aseem.kishore@gmail.com>"
+  , "author": "Safwan Kamarrudin <shaihulud@alumni.cmu.edu>"
   , "private": true
   , "dependencies":
     { "express": "~2.5.8"
