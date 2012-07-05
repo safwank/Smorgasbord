@@ -5,7 +5,7 @@ if users.length
     ul.users
         for user in users
             li.user
-                a(href='/users/#{user.id}') #{user.name}
+                a(href='/users/#{user.id}') #{user.name} #{JSON.stringify(user)}
 else
     p There are no users currently.
 
