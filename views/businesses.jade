@@ -5,7 +5,7 @@ if businesses.length
     ul.businesses
         for business in businesses
             li.business
-                #{JSON.stringify(business)}
+                p #{business.Name}
 else
     p There are no businesses currently.
 

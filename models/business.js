@@ -37,22 +37,37 @@ function proxyProperty(prop, isData) {
     });
 }
 
-proxyProperty('Id');
-proxyProperty('Name');
-proxyProperty('ACN');
-proxyProperty('Phone');
-proxyProperty('Website');
-proxyProperty('AddressLine1');
-proxyProperty('AddressLine2');
-proxyProperty('Postcode');
-proxyProperty('City');
-proxyProperty('State');
-proxyProperty('Type');
+proxyProperty('Id', true);
+proxyProperty('Name', true);
+proxyProperty('ACN', true);
+proxyProperty('Phone', true);
+proxyProperty('Website', true);
+proxyProperty('AddressLine1', true);
+proxyProperty('AddressLine2', true);
+proxyProperty('Postcode', true);
+proxyProperty('City', true);
+proxyProperty('State', true);
+proxyProperty('Type', true);
 
 // Private functions
-     
+
+function isNullOrEmpty(value) {
+  return !value || value.length === 0 || /^\s*$/.test(value);
+}
+
+function removeNullOrEmptyPropertiesIn(object) {
+  for (var propertyName in object)
+  {
+    var propertyValue = object[propertyName];
+
+    if (isNullOrEmpty(propertyValue)) 
+      delete object[propertyName];
+  }
+}
+
 function loadBusiness(data, index) {
   var business = data;
+  removeNullOrEmptyPropertiesIn(business);
   Business.create(business, handleCreated);
 }
 
@@ -72,7 +87,7 @@ function handleCreated(error, data) {
 // Public functions
 
 Business.loadFromCSV = function() {
-  csv().fromPath('data/BusinessTest.csv', { columns: true, trim: true })
+  csv().fromPath('data/Business.csv', { columns: true, trim: true })
        .on('data', loadBusiness)
        .on('end', handleSuccess)
        .on('error', handleLoadError);
@@ -95,11 +110,10 @@ Business.create = function (data, callback) {
 Business.getAll = function (callback) {
     db.getIndexedNodes(INDEX_NAME, INDEX_KEY, INDEX_VAL, function (err, nodes) {
         if (err) return callback(null, []);
-        
-	var businesses = nodes.map(function (node) {
+        var businesses = nodes.map(function (node) {
             return new Business(node);
         });
         
-	callback(null, businesses);
+	      callback(null, businesses);
     });
 };
