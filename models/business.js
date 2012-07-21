@@ -1,5 +1,6 @@
 // Initialization
 
+var util = require('../common/util');
 var csv = require('csv');
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
@@ -18,56 +19,23 @@ var Business = module.exports = function Business(_node) {
 
 // Pass-through Business properties
 
-function proxyProperty(prop, isData) {
-    Object.defineProperty(Business.prototype, prop, {
-        get: function () {
-            if (isData) {
-                return this._node.data[prop];
-            } else {
-                return this._node[prop];
-            }
-        },
-        set: function (value) {
-            if (isData) {
-                this._node.data[prop] = value;
-            } else {
-                this._node[prop] = value;
-            }
-        }
-    });
-}
-
-proxyProperty('Id', true);
-proxyProperty('Name', true);
-proxyProperty('ACN', true);
-proxyProperty('Phone', true);
-proxyProperty('Website', true);
-proxyProperty('AddressLine1', true);
-proxyProperty('AddressLine2', true);
-proxyProperty('Postcode', true);
-proxyProperty('City', true);
-proxyProperty('State', true);
-proxyProperty('Type', true);
+util.proxyProperty(Business, 'Id', true);
+util.proxyProperty(Business, 'Name', true);
+util.proxyProperty(Business, 'ACN', true);
+util.proxyProperty(Business, 'Phone', true);
+util.proxyProperty(Business, 'Website', true);
+util.proxyProperty(Business, 'AddressLine1', true);
+util.proxyProperty(Business, 'AddressLine2', true);
+util.proxyProperty(Business, 'Postcode', true);
+util.proxyProperty(Business, 'City', true);
+util.proxyProperty(Business, 'State', true);
+util.proxyProperty(Business, 'Type', true);
 
 // Private functions
 
-function isNullOrEmpty(value) {
-  return !value || value.length === 0 || /^\s*$/.test(value);
-}
-
-function removeNullOrEmptyPropertiesIn(object) {
-  for (var propertyName in object)
-  {
-    var propertyValue = object[propertyName];
-
-    if (isNullOrEmpty(propertyValue)) 
-      delete object[propertyName];
-  }
-}
-
 function loadBusiness(data, index) {
   var business = data;
-  removeNullOrEmptyPropertiesIn(business);
+  util.removeNullOrEmptyPropertiesIn(business);
   Business.create(business, handleCreated);
 }
 
@@ -108,12 +76,13 @@ Business.create = function (data, callback) {
 };
 
 Business.getAll = function (callback) {
-    db.getIndexedNodes(INDEX_NAME, INDEX_KEY, INDEX_VAL, function (err, nodes) {
-        if (err) return callback(null, []);
-        var businesses = nodes.map(function (node) {
-            return new Business(node);
-        });
-        
-	      callback(null, businesses);
+  db.getIndexedNodes(INDEX_NAME, INDEX_KEY, INDEX_VAL, function (err, nodes) {
+    if (err) return callback(null, []);
+    
+    var businesses = nodes.map(function (node) {
+        return new Business(node);
     });
+    
+    callback(null, businesses);
+  });
 };
