@@ -4,7 +4,7 @@ var csv = require('csv');
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
-// Constants:
+// Constants
 
 var INDEX_NAME = 'nodes';
 var INDEX_KEY = 'type';
@@ -16,7 +16,7 @@ var Business = module.exports = function Business(_node) {
     this._node = _node;
 };
 
-// Pass-through Business properties:
+// Pass-through Business properties
 
 function proxyProperty(prop, isData) {
     Object.defineProperty(Business.prototype, prop, {

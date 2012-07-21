@@ -1,0 +1,15 @@
+h1 Partners
+
+if partners.length
+    p Here are the current partners:
+    ul.partners
+        for partner in partners
+            li.partner
+                p #{partner.FirstName} #{partner.LastName} 
+else
+    p There are no partners currently.
+
+form(action='', method='POST')
+    p Create a new partner:
+    input(type='text', name='name', placeholder='Name', required)
+    input(type='submit', value='Create')

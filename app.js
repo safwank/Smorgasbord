@@ -46,8 +46,11 @@ app.post('/users/:id/follow', routes.users.follow);
 app.post('/users/:id/unfollow', routes.users.unfollow);
 
 app.get('/datainit/business', routes.datainit.loadBusiness);
+app.get('/datainit/partner', routes.datainit.loadPartner);
 
 app.get('/businesses', routes.businesses.list);
+
+app.get('/partners', routes.partners.list);
 
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
