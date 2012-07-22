@@ -1,0 +1,11 @@
+h1 Employees
+
+if employees.length
+    p Here are the current employees:
+    ul.employees
+        for employee in employees
+            li.employee
+                p #{employee.FirstName} #{employee.LastName} 
+else
+    p There are no employees currently.
+

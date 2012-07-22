@@ -1,0 +1,11 @@
+h1 Referrals
+
+if referrals.length
+    p Here are the current referrals:
+    ul.referrals
+        for referral in referrals
+            li.referral
+                p #{referral.Type}
+else
+    p There are no referrals currently.
+

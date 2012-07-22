@@ -1,0 +1,11 @@
+h1 Stocks
+
+if stocks.length
+    p Here are the current stocks:
+    ul.stocks
+        for stock in stocks
+            li.stock
+                p (#{stock.Code}) #{stock.Name} 
+else
+    p There are no stocks currently.
+

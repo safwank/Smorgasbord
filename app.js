@@ -47,10 +47,22 @@ app.post('/users/:id/unfollow', routes.users.unfollow);
 
 app.get('/datainit/business', routes.datainit.loadBusiness);
 app.get('/datainit/partner', routes.datainit.loadPartner);
+app.get('/datainit/employee', routes.datainit.loadEmployee);
+app.get('/datainit/individual', routes.datainit.loadIndividual);
+app.get('/datainit/stock', routes.datainit.loadStock);
+app.get('/datainit/referral', routes.datainit.loadReferral);
 
 app.get('/businesses', routes.businesses.list);
 
 app.get('/partners', routes.partners.list);
+
+app.get('/employees', routes.employees.list);
+
+app.get('/individuals', routes.individuals.list);
+
+app.get('/stocks', routes.stocks.list);
+
+app.get('/referrals', routes.referrals.list);
 
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

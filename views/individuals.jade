@@ -1,0 +1,11 @@
+h1 Individuals
+
+if individuals.length
+    p Here are the current individuals:
+    ul.individuals
+        for individual in individuals
+            li.individual
+                p #{individual.FirstName} #{individual.LastName} 
+else
+    p There are no individuals currently.
+

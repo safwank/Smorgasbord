@@ -1,14 +1,16 @@
-Object.prototype.isNullOrEmpty = function(value) {
+// Private functions
+function isNullOrEmpty(value) {
   return !value || value.length === 0 || /^\s*$/.test(value);
 }
 
-exports.isNullOrEmpty = Object.isNullOrEmpty;
+// Public functions
+exports.isNullOrEmpty = isNullOrEmpty;
 
 exports.removeNullOrEmptyPropertiesIn = function(object) {
   for (var propertyName in object) {
     var propertyValue = object[propertyName];
 
-    if (object.isNullOrEmpty(propertyValue)) 
+    if (isNullOrEmpty(propertyValue)) 
       delete object[propertyName];
   }
 }
