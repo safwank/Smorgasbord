@@ -8,3 +8,4 @@ exports.employees = require('./employees');
 exports.individuals = require('./individuals');
 exports.stocks = require('./stocks');
 exports.referrals = require('./referrals');
+exports.upload = require('./upload');
