@@ -3,6 +3,7 @@ exports.site = require('./site');
 exports.users = require('./users');
 exports.datainit = require('./datainit');
 exports.businesses = require('./businesses');
+exports.businesstaxreturns = require('./businesstaxreturns');
 exports.partners = require('./partners');
 exports.employees = require('./employees');
 exports.individuals = require('./individuals');

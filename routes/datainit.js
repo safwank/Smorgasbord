@@ -1,4 +1,5 @@
 var Business = require('../models/business');
+var BusinessTaxReturn = require('../models/businesstaxreturn');
 var Partner = require('../models/partner');
 var Employee = require('../models/employee');
 var Individual = require('../models/individual');
@@ -9,6 +10,12 @@ var Referral = require('../models/referral');
 exports.loadBusiness = function (req, res, next) {
     Business.loadFromCSV();
     res.redirect('/businesses');
+};
+
+// GET /datainit/businesstaxreturn
+exports.loadBusinessTaxReturn = function (req, res, next) {
+    BusinessTaxReturn.loadFromCSV();
+    res.redirect('/businesstaxreturns');
 };
 
 // GET /datainit/partner

@@ -48,6 +48,7 @@ app.post('/users/:id/follow', routes.users.follow);
 app.post('/users/:id/unfollow', routes.users.unfollow);
 
 app.get('/datainit/business', routes.datainit.loadBusiness);
+app.get('/datainit/businesstaxreturn', routes.datainit.loadBusinessTaxReturn);
 app.get('/datainit/partner', routes.datainit.loadPartner);
 app.get('/datainit/employee', routes.datainit.loadEmployee);
 app.get('/datainit/individual', routes.datainit.loadIndividual);
@@ -55,6 +56,8 @@ app.get('/datainit/stock', routes.datainit.loadStock);
 app.get('/datainit/referral', routes.datainit.loadReferral);
 
 app.get('/businesses', routes.businesses.list);
+
+app.get('/businesstaxreturns', routes.businesstaxreturns.list);
 
 app.get('/partners', routes.partners.list);
 

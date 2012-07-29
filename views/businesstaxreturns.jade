@@ -1,0 +1,10 @@
+h1 Business Tax Returns
+
+if businessTaxReturns.length
+    p Here are the current business tax returns:
+    ul.businessTaxReturns
+        for businessTaxReturn in businessTaxReturns
+            li.businessTaxReturn
+                p #{businessTaxReturn.BusinessId}
+else
+    p There are no business tax returns currently.
