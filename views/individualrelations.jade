@@ -1,0 +1,11 @@
+h1 Individual Relations
+
+if individualRelations.length
+    p Here are the current individual relations:
+    ul.individualRelations
+        for individualRelation in individualRelations
+            li.individualRelation
+                p #{individualRelation.PersonId1} - #{individualRelation.PersonId2} 
+else
+    p There are no individual relations currently.
+

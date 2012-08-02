@@ -3,6 +3,7 @@ var BusinessTaxReturn = require('../models/businesstaxreturn');
 var Partner = require('../models/partner');
 var Employee = require('../models/employee');
 var Individual = require('../models/individual');
+var IndividualRelation = require('../models/individualrelation');
 var Stock = require('../models/stock');
 var Referral = require('../models/referral');
 var FinancialYear = require('../models/financialyear');
@@ -35,6 +36,12 @@ exports.loadEmployee = function (req, res, next) {
 exports.loadIndividual = function (req, res, next) {
     Individual.loadFromCSV();
     res.redirect('/individuals');
+};
+
+// GET /datainit/individualrelation
+exports.loadIndividualRelation = function (req, res, next) {
+    IndividualRelation.loadFromCSV();
+    res.redirect('/individualrelations');
 };
 
 // GET /datainit/stock
