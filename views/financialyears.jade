@@ -1,0 +1,11 @@
+h1 Financial Years
+
+if financialYears.length
+    p Here are the current financial years:
+    ul.financialYears
+        for financialYear in financialYears
+            li.financialYear
+                p #{financialYear.Year}
+else
+    p There are no financial years currently.
+

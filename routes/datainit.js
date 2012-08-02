@@ -5,6 +5,7 @@ var Employee = require('../models/employee');
 var Individual = require('../models/individual');
 var Stock = require('../models/stock');
 var Referral = require('../models/referral');
+var FinancialYear = require('../models/financialyear');
 
 // GET /datainit/business
 exports.loadBusiness = function (req, res, next) {
@@ -46,4 +47,10 @@ exports.loadStock = function (req, res, next) {
 exports.loadReferral = function (req, res, next) {
     Referral.loadFromCSV();
     res.redirect('/referrals');
+};
+
+// GET /datainit/financialyear
+exports.loadFinancialYear = function (req, res, next) {
+    FinancialYear.loadFromCSV();
+    res.redirect('/financialyears');
 };

@@ -54,6 +54,7 @@ app.get('/datainit/employee', routes.datainit.loadEmployee);
 app.get('/datainit/individual', routes.datainit.loadIndividual);
 app.get('/datainit/stock', routes.datainit.loadStock);
 app.get('/datainit/referral', routes.datainit.loadReferral);
+app.get('/datainit/financialyear', routes.datainit.loadFinancialYear);
 
 app.get('/businesses', routes.businesses.list);
 
@@ -68,6 +69,8 @@ app.get('/individuals', routes.individuals.list);
 app.get('/stocks', routes.stocks.list);
 
 app.get('/referrals', routes.referrals.list);
+
+app.get('/financialyears', routes.financialyears.list);
 
 app.get('/upload', routes.upload.show);
 app.post('/upload', routes.upload.importCSVData);
