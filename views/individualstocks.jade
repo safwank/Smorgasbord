@@ -1,0 +1,11 @@
+h1 Individual Stocks
+
+if individualStocks.length
+    p Here are the current individual stocks:
+    ul.individualStocks
+        for individualStock in individualStocks
+            li.individualStock
+                p #{individualStock.PersonId} - #{individualStock.Quantity} 
+else
+    p There are no individual stocks currently.
+
