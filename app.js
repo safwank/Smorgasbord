@@ -58,6 +58,7 @@ app.get('/datainit/individualtaxreturn', routes.datainit.loadIndividualTaxReturn
 app.get('/datainit/stock', routes.datainit.loadStock);
 app.get('/datainit/referral', routes.datainit.loadReferral);
 app.get('/datainit/financialyear', routes.datainit.loadFinancialYear);
+app.get('/datainit/relation', routes.datainit.loadRelation);
 
 app.get('/businesses', routes.businesses.list);
 
@@ -77,6 +78,8 @@ app.get('/stocks', routes.stocks.list);
 app.get('/referrals', routes.referrals.list);
 
 app.get('/financialyears', routes.financialyears.list);
+
+app.get('/relations', routes.relations.list);
 
 app.get('/upload', routes.upload.show);
 app.post('/upload', routes.upload.importCSVData);

@@ -1,0 +1,11 @@
+h1 Relations
+
+if relations.length
+    p Here are the current relations:
+    ul.relations
+        for relation in relations
+            li.relation
+                p #{relation.Id} #{relation.Type} 
+else
+    p There are no relations currently.
+

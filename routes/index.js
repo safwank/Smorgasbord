@@ -13,5 +13,6 @@ exports.individualtaxreturns = require('./individualtaxreturns');
 exports.stocks = require('./stocks');
 exports.referrals = require('./referrals');
 exports.financialyears = require('./financialyears');
+exports.relations = require('./relations');
 
 exports.upload = require('./upload');

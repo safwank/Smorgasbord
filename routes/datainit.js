@@ -9,6 +9,7 @@ var IndividualTaxReturn = require('../models/individualtaxreturn');
 var Stock = require('../models/stock');
 var Referral = require('../models/referral');
 var FinancialYear = require('../models/financialyear');
+var Relation = require('../models/relation');
 
 // GET /datainit/business
 exports.loadBusiness = function (req, res, next) {
@@ -74,4 +75,10 @@ exports.loadReferral = function (req, res, next) {
 exports.loadFinancialYear = function (req, res, next) {
     FinancialYear.loadFromCSV();
     res.redirect('/financialyears');
+};
+
+// GET /datainit/relation
+exports.loadRelation = function (req, res, next) {
+    Relation.loadFromCSV();
+    res.redirect('/relations');
 };
