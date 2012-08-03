@@ -47,21 +47,7 @@ app.del('/users/:id', routes.users.del);
 app.post('/users/:id/follow', routes.users.follow);
 app.post('/users/:id/unfollow', routes.users.unfollow);
 
-app.get('/datainit/business', routes.datainit.loadBusiness);
-app.get('/datainit/businesstaxreturn', routes.datainit.loadBusinessTaxReturn);
-app.get('/datainit/partner', routes.datainit.loadPartner);
-app.get('/datainit/employee', routes.datainit.loadEmployee);
-app.get('/datainit/individual', routes.datainit.loadIndividual);
-app.get('/datainit/individualrelation', routes.datainit.loadIndividualRelation);
-app.get('/datainit/individualstock', routes.datainit.loadIndividualStock);
-app.get('/datainit/individualtaxreturn', routes.datainit.loadIndividualTaxReturn);
-app.get('/datainit/stock', routes.datainit.loadStock);
-app.get('/datainit/referral', routes.datainit.loadReferral);
-app.get('/datainit/financialyear', routes.datainit.loadFinancialYear);
-app.get('/datainit/relation', routes.datainit.loadRelation);
-
 app.get('/businesses', routes.businesses.list);
-
 app.get('/businesstaxreturns', routes.businesstaxreturns.list);
 
 app.get('/partners', routes.partners.list);
@@ -81,8 +67,23 @@ app.get('/financialyears', routes.financialyears.list);
 
 app.get('/relations', routes.relations.list);
 
+app.get('/datainit/business', routes.datainit.loadBusiness);
+app.get('/datainit/businesstaxreturn', routes.datainit.loadBusinessTaxReturn);
+app.get('/datainit/partner', routes.datainit.loadPartner);
+app.get('/datainit/employee', routes.datainit.loadEmployee);
+app.get('/datainit/individual', routes.datainit.loadIndividual);
+app.get('/datainit/individualrelation', routes.datainit.loadIndividualRelation);
+app.get('/datainit/individualstock', routes.datainit.loadIndividualStock);
+app.get('/datainit/individualtaxreturn', routes.datainit.loadIndividualTaxReturn);
+app.get('/datainit/stock', routes.datainit.loadStock);
+app.get('/datainit/referral', routes.datainit.loadReferral);
+app.get('/datainit/financialyear', routes.datainit.loadFinancialYear);
+app.get('/datainit/relation', routes.datainit.loadRelation);
+
 app.get('/upload', routes.upload.show);
 app.post('/upload', routes.upload.importCSVData);
+
+app.get('/batchimport', routes.batchimport.importCSVData);
 
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

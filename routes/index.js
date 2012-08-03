@@ -16,3 +16,4 @@ exports.financialyears = require('./financialyears');
 exports.relations = require('./relations');
 
 exports.upload = require('./upload');
+exports.batchimport = require('./batchimport');
