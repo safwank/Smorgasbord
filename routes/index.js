@@ -9,6 +9,7 @@ exports.employees = require('./employees');
 exports.individuals = require('./individuals');
 exports.individualrelations = require('./individualrelations');
 exports.individualstocks = require('./individualstocks');
+exports.individualtaxreturns = require('./individualtaxreturns');
 exports.stocks = require('./stocks');
 exports.referrals = require('./referrals');
 exports.financialyears = require('./financialyears');

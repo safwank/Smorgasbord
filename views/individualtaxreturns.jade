@@ -1,0 +1,11 @@
+h1 Individual Tax Returns
+
+if individualTaxReturns.length
+    p Here are the current individual tax returns:
+    ul.individualTaxReturns
+        for individualTaxReturn in individualTaxReturns
+            li.individualTaxReturn
+                p #{individualTaxReturn.PersonId} - #{individualTaxReturn.TaxPayable}
+else
+    p There are no individual tax returns currently.
+
