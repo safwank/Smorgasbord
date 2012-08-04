@@ -45,8 +45,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-Relation.loadFromCSV = function() {
-  csv().fromPath('data/Relation.csv', { columns: true, trim: true })
+Relation.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadRelation)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

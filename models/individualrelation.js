@@ -46,8 +46,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-IndividualRelation.loadFromCSV = function() {
-  csv().fromPath('data/Individual_Relation.csv', { columns: true, trim: true })
+IndividualRelation.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadIndividualRelation)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

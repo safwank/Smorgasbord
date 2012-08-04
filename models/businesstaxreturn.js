@@ -47,8 +47,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-BusinessTaxReturn.loadFromCSV = function() {
-  csv().fromPath('data/Business_TaxRecord.csv', { columns: true, trim: true })
+BusinessTaxReturn.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadBusinessTaxReturn)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

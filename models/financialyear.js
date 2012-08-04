@@ -45,8 +45,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-FinancialYear.loadFromCSV = function() {
-  csv().fromPath('data/FinancialYear.csv', { columns: true, trim: true })
+FinancialYear.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadFinancialYear)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

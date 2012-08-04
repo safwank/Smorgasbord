@@ -46,8 +46,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-Referral.loadFromCSV = function() {
-  csv().fromPath('data/Referral.csv', { columns: true, trim: true })
+Referral.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadReferral)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

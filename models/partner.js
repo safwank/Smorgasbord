@@ -59,8 +59,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-Partner.loadFromCSV = function() {
-  csv().fromPath('data/Partner.csv', { columns: true, trim: true })
+Partner.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadPartner)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

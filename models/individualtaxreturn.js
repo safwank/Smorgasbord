@@ -47,8 +47,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-IndividualTaxReturn.loadFromCSV = function() {
-  csv().fromPath('data/Individual_TaxRecord.csv', { columns: true, trim: true })
+IndividualTaxReturn.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadIndividualTaxReturn)
        .on('end', handleSuccess)
        .on('error', handleLoadError);

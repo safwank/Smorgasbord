@@ -54,8 +54,8 @@ function handleCreated(error, data) {
 
 // Public functions
 
-Business.loadFromCSV = function() {
-  csv().fromPath('data/Business.csv', { columns: true, trim: true })
+Business.loadFromCSV = function(csvFilePath) {
+  csv().fromPath(csvFilePath, { columns: true, trim: true })
        .on('data', loadBusiness)
        .on('end', handleSuccess)
        .on('error', handleLoadError);
