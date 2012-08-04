@@ -1,38 +1,47 @@
-var io = require('socket.io').listen(app);
-var thisSocket;
+var sys = require("sys"),
+	http = require("http"),
+    url = require("url"),
+    fs = require("fs"),
+	io = require('socket.io').listen(app),
+	AdmZip = require('adm-zip'),
+	uuid = require('node-uuid');
+
+//TODO: Re-factor this to support multiple requests :)
+var thisSocket; 
 io.sockets.on('connection', function (socket) {
   	thisSocket = socket;
 });
+
+var FILE_DROP = 'temp/';
+var FILE_EXTENSION = '.zip';
 
 // GET /batchimport
 exports.importCSVData = function (request, response, next) {
 	importCSVData(function (error) {
     	if (error) return next(error);
-        response.render('batchimportstatus');
     });
+
+    response.render('batchimportstatus');
 };
 
 function importCSVData(callback) {
-	downloadCSVFile();
-	callback();
+	var zipFile = downloadZipFile(function (error, zipFile) {
+		unzipCSVFilesIn(zipFile, function (error) {
+			//import each file
+			//create relationships
+		});
+	});
 }
 
-function downloadCSVFile() {
-	var sys = require("sys"),
-    http = require("http"),
-    url = require("url"),
-    path = require("path"),
-    fs = require("fs"),
-    events = require("events");
-
+function downloadZipFile(callback) {
 	var downloadFileUrlString = "https://s3.amazonaws.com/myobadcodingcompetition/CSV+data.zip";
 	var downloadFileUrl = url.parse(downloadFileUrlString);
 	var host = downloadFileUrl.hostname;
 	var downloadFilename = downloadFileUrl.pathname.split("/").pop();
 
 	var downloadProgress = 0;
-	var downloadFileUrlStringLocation = 'temp/' + downloadFilename;
-    var downloadfile = fs.createWriteStream(downloadFileUrlStringLocation, {'flags': 'a'});
+	var downloadFileLocation = FILE_DROP + uuid.v1() + FILE_EXTENSION;
+    var downloadFile = fs.createWriteStream(downloadFileLocation, {'flags': 'a'});
 
     var downloadOptions = {
 		host: host,
@@ -42,22 +51,28 @@ function downloadCSVFile() {
 	};
 
 	var request = http.request(downloadOptions, function(response) {
-		sys.puts("Downloading file: " + downloadFilename);
+		sys.puts('Downloading file: ' + downloadFilename);
 	  	sys.puts('STATUS: ' + response.statusCode);
 	  	sys.puts('HEADERS: ' + JSON.stringify(response.headers));
 
-	  	response.setEncoding('utf8');
+	  	var contentLength = response.headers['content-length'];
+
+	  	response.setEncoding('binary');
 	  	response.on('data', function (chunk) {
 	    	downloadProgress += chunk.length;
-      		downloadfile.write(chunk, encoding='binary');
-        	sys.puts("Download progress: " + downloadProgress + " bytes");
-
+      		downloadFile.write(chunk, encoding='binary');
+      		
+        	sys.puts('Download progress: ' + downloadProgress + ' bytes');
         	if (thisSocket)
-        		thisSocket.emit('progress', { progress: downloadProgress });
+        	{
+        		var progressPercentage = (downloadProgress/contentLength) * 100;
+        		thisSocket.emit('downloadZipFileProgress', { progress: progressPercentage });
+        	}
 	  	});
 	  	response.on('end', function () {
-	  		downloadfile.end();
+	  		downloadFile.end();
       		sys.puts('Finished downloading ' + downloadFilename);
+      		callback(null, downloadFileLocation);
 		});
 	});
 
@@ -66,4 +81,18 @@ function downloadCSVFile() {
 	});
 
 	request.end();
+}
+
+function unzipCSVFilesIn(zipFileLocation, callback) {
+	sys.puts('Unzipping file: ' + zipFileLocation);
+	thisSocket.emit('unzipFileProgress', { progress: 'Unzipping file...' });
+
+	var zipFile = new AdmZip(zipFileLocation);
+	zipFile.extractAllTo(FILE_DROP, true);
+	
+	sys.puts('Finished unzipping ' + zipFileLocation);
+	if (thisSocket) 
+		thisSocket.emit('unzipFileProgress', { progress: 'Finished unzipping file' });
+	
+	callback(null);
 }
