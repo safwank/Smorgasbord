@@ -1,8 +1,13 @@
+var io = require('socket.io').listen(app);
+var thisSocket;
+io.sockets.on('connection', function (socket) {
+  	thisSocket = socket;
+});
 
 // GET /batchimport
-exports.importCSVData = function (req, response, next) {
-    importCSVData(function (err) {
-        if (err) return next(err);
+exports.importCSVData = function (request, response, next) {
+	importCSVData(function (error) {
+    	if (error) return next(error);
         response.render('batchimportstatus');
     });
 };
@@ -46,6 +51,9 @@ function downloadCSVFile() {
 	    	downloadProgress += chunk.length;
       		downloadfile.write(chunk, encoding='binary');
         	sys.puts("Download progress: " + downloadProgress + " bytes");
+
+        	if (thisSocket)
+        		thisSocket.emit('progress', { progress: downloadProgress });
 	  	});
 	  	response.on('end', function () {
 	  		downloadfile.end();

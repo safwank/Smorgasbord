@@ -1,0 +1,13 @@
+head
+   script(src='http://code.jquery.com/jquery-1.6.2.min.js')
+   script(src='/socket.io/socket.io.js')
+   script(type='text/javascript')
+      var socket = io.connect('http://localhost:3000')
+      socket.on('progress', function (data) {
+         $('#progressBar').text(data.progress + ' bytes downloaded');
+      })
+
+body
+   p Batch import is in progress...
+   #progressBar 
+   
