@@ -1,34 +1,34 @@
 var sys = require('sys'),
 	http = require('http'),
-    url = require('url'),
-    fs = require('fs'),
-    path = require('path'),
+	url = require('url'),
+	fs = require('fs'),
+	path = require('path'),
 	io = require('socket.io').listen(app),
 	uuid = require('node-uuid'),
-    redisUtil = require('../common/redisutil');
+	redisUtil = require('../common/redisutil');
 
 //TODO: Re-factor this to support multiple requests :)
-var thisSocket; 
-io.sockets.on('connection', function (socket) {
-  	thisSocket = socket;
+var thisSocket;
+io.sockets.on('connection', function(socket) {
+	thisSocket = socket;
 });
 
 var FILE_DROP = 'temp';
 var FILE_EXTENSION = '.zip';
 
 // GET /batchimport
-exports.importCSVData = function (request, response, next) {
-	importCSVData(function (error) {
-    	if (error) return next(error);
-    });
+exports.importCSVData = function(request, response, next) {
+	importCSVData(function(error) {
+		if (error) return next(error);
+	});
 
-    response.render('batchimportstatus');
+	response.render('batchimportstatus');
 };
 
 function importCSVData(callback) {
-	var zipFile = downloadZipFile(function (error, zipFile) {
-		unzipCSVFilesIn(zipFile, function (error, csvFilesPath) {
-			importCSVFilesIn(csvFilesPath, function (error) {
+	var zipFile = downloadZipFile(function(error, zipFile) {
+		unzipCSVFilesIn(zipFile, function(error, csvFilesPath) {
+			importCSVFilesIn(csvFilesPath, function(error) {
 				//TODO: create relationships
 			});
 		});
@@ -43,43 +43,46 @@ function downloadZipFile(callback) {
 
 	var downloadProgress = 0;
 	var downloadFilePath = path.join(FILE_DROP, uuid.v1() + FILE_EXTENSION);
-    var downloadFile = fs.createWriteStream(downloadFilePath, {'flags': 'a'});
+	var downloadFile = fs.createWriteStream(downloadFilePath, {
+		'flags': 'a'
+	});
 
-    var downloadOptions = {
+	var downloadOptions = {
 		host: host,
-	  	port: 80,
-	  	path: downloadFileUrl.pathname,
-	  	method: 'GET'
+		port: 80,
+		path: downloadFileUrl.pathname,
+		method: 'GET'
 	};
 
 	var request = http.request(downloadOptions, function(response) {
 		sys.puts('Downloading file: ' + downloadFilename);
-	  	sys.puts('STATUS: ' + response.statusCode);
-	  	sys.puts('HEADERS: ' + JSON.stringify(response.headers));
+		sys.puts('STATUS: ' + response.statusCode);
+		sys.puts('HEADERS: ' + JSON.stringify(response.headers));
 
-	  	var contentLength = response.headers['content-length'];
+		var contentLength = response.headers['content-length'];
 
-	  	response.setEncoding('binary');
-	  	response.on('data', function (chunk) {
-	    	downloadProgress += chunk.length;
-      		downloadFile.write(chunk, encoding='binary');
+		response.setEncoding('binary');
+		response.on('data', function(chunk) {
+			downloadProgress += chunk.length;
+			downloadFile.write(chunk, encoding = 'binary');
 
-        	sys.puts('Download progress: ' + downloadProgress + ' bytes');
-        	if (thisSocket)
-        	{
-        		var progressPercentage = (downloadProgress/contentLength) * 100;
-        		thisSocket.emit('downloadZipFileProgress', { progress: progressPercentage });
-        	}
-	  	});
-	  	response.on('end', function () {
-	  		downloadFile.end();
-      		sys.puts('Finished downloading ' + downloadFilename);
-      		callback(null, downloadFilePath);
+			sys.puts('Download progress: ' + downloadProgress + ' bytes');
+			if (thisSocket) {
+				var progressPercentage = (downloadProgress / contentLength) * 100;
+				thisSocket.emit('downloadZipFileProgress', {
+					progress: progressPercentage
+				});
+			}
+		});
+		response.on('end', function() {
+			downloadFile.end();
+			sys.puts('Finished downloading ' + downloadFilename);
+			callback(null, downloadFilePath);
 		});
 	});
 
 	request.on('error', function(e) {
-	  	sys.puts('Problem with request: ' + e.message);
+		sys.puts('Problem with request: ' + e.message);
 	});
 
 	request.end();
@@ -87,26 +90,26 @@ function downloadZipFile(callback) {
 
 function unzipCSVFilesIn(zipFilePath, callback) {
 	sys.puts('Unzipping file: ' + zipFilePath);
-	if (thisSocket)
-		thisSocket.emit('unzipFileProgress', { progress: 'Unzipping file...' });
+	if (thisSocket) thisSocket.emit('unzipFileProgress', {
+		progress: 'Unzipping file...'
+	});
 
 	var zipFileName = path.basename(zipFilePath, '.zip');
 	var csvFilesPath = path.join(FILE_DROP, zipFileName);
-	
+
 	var spawn = require('child_process').spawn;
 	var unzip = spawn('unzip', [zipFilePath, '-d', csvFilesPath]);
 
-    unzip.stdout.on('data', function (data) {
-    });
-    unzip.stderr.on('data', function (data) {
-    });
-    unzip.on('exit', function (code) {
-        sys.puts('Finished unzipping ' + zipFilePath);
-		if (thisSocket) 
-			thisSocket.emit('unzipFileProgress', { progress: 'Finished unzipping file' });
-	
+	unzip.stdout.on('data', function(data) {});
+	unzip.stderr.on('data', function(data) {});
+	unzip.on('exit', function(code) {
+		sys.puts('Finished unzipping ' + zipFilePath);
+		if (thisSocket) thisSocket.emit('unzipFileProgress', {
+			progress: 'Finished unzipping file'
+		});
+
 		callback(null, csvFilesPath);
-    });
+	});
 }
 
 function importCSVFilesIn(csvFilesPath, callback) {
@@ -136,12 +139,13 @@ function importCSVFilesIn(csvFilesPath, callback) {
 	Relation.loadFromCSV(path.join(csvFilesPath, 'Relation.csv'));
 	Stock.loadFromCSV(path.join(csvFilesPath, 'Stock.csv'));
 
-	setInterval(function () {
-		redisUtil.getTotalNodes(function (err, totalNodes) {
+	setInterval(function() {
+		redisUtil.getTotalNodes(function(err, totalNodes) {
 			if (err) return callback(err);
 
-			if (thisSocket) 
-				thisSocket.emit('importCSVProgress', { progress: totalNodes });	
+			if (thisSocket) thisSocket.emit('importCSVProgress', {
+				progress: totalNodes
+			});
 
 			if (!totalNodes) callback(null);
 		});
