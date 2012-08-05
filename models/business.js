@@ -42,7 +42,6 @@ function loadBusiness(data, index) {
 
 function handleSuccess(count) {
   console.log('Number of businesses created: ' + count);
-
   redisUtil.incrementTotalNodesBy(count);
 }
 
@@ -52,8 +51,8 @@ function handleLoadError(error) {
 
 function handleCreated(error, data) {
   if (error) console.log(error.message);
+  
   console.log('Created: ' + data);
-
   redisUtil.decrementTotalNodes();
 }
 

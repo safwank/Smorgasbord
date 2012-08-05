@@ -4,10 +4,23 @@ head
    script(type='text/javascript')
       var socket = io.connect('http://localhost:3000')
       socket.on('downloadZipFileProgress', function (data) {
-         $('#downloadZipFileProgress').text(data.progress.toFixed(2) + '%')
+         var progress = data.progress
+
+         if (progress < 100)
+            $('#downloadZipFileProgress').text(progress.toFixed(2) + '%')
+         else
+            $('#downloadZipFileProgress').text('Finished downloading zip file')
       })
       socket.on('unzipFileProgress', function (data) {
          $('#unzipFileProgress').text(data.progress);
+      })
+      socket.on('importCSVProgress', function (data) {
+         var progress = data.progress
+
+         if (progress > 0)
+            $('#importCSVProgress').text('Importing ' + data.progress + ' nodes');
+         else
+            $('#importCSVProgress').text('Finished importing CSV files');
       })
 
 body
@@ -20,4 +33,5 @@ body
    #unzipFileProgress
 
    p Step 3 - Import CSV files
+   #importCSVProgress
    

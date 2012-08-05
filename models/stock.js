@@ -1,9 +1,10 @@
 // Initialization
 
-var util = require('../common/util');
-var csv = require('csv');
-var neo4j = require('neo4j');
-var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
+var util = require('../common/util'),
+    redisUtil = require('../common/redisutil'),
+    csv = require('csv'),
+    neo4j = require('neo4j'),
+    db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
 // Constants
 
@@ -34,6 +35,7 @@ function loadStock(data, index) {
 
 function handleSuccess(count) {
   console.log('Number of stocks created: ' + count);
+  redisUtil.incrementTotalNodesBy(count);
 }
 
 function handleLoadError(error) {
@@ -42,7 +44,9 @@ function handleLoadError(error) {
 
 function handleCreated(error, data) {
   if (error) console.log(error.message);
+  
   console.log('Created: ' + data);
+  redisUtil.decrementTotalNodes();
 }
 
 // Public functions

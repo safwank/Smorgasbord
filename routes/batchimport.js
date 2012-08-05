@@ -4,7 +4,8 @@ var sys = require('sys'),
     fs = require('fs'),
     path = require('path'),
 	io = require('socket.io').listen(app),
-	uuid = require('node-uuid');
+	uuid = require('node-uuid'),
+    redisUtil = require('../common/redisutil');
 
 //TODO: Re-factor this to support multiple requests :)
 var thisSocket; 
@@ -135,8 +136,14 @@ function importCSVFilesIn(csvFilesPath, callback) {
 	Relation.loadFromCSV(path.join(csvFilesPath, 'Relation.csv'));
 	Stock.loadFromCSV(path.join(csvFilesPath, 'Stock.csv'));
 
-	//TODO: Poll Redis every few seconds and display progress
-	//TODO: Return once complete
+	setInterval(function () {
+		redisUtil.getTotalNodes(function (err, totalNodes) {
+			if (err) return callback(err);
 
-	callback(null);
+			if (thisSocket) 
+				thisSocket.emit('importCSVProgress', { progress: totalNodes });	
+
+			if (!totalNodes) callback(null);
+		});
+	}, 1000);
 }
