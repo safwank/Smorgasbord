@@ -135,5 +135,8 @@ function importCSVFilesIn(csvFilesPath, callback) {
 	Relation.loadFromCSV(path.join(csvFilesPath, 'Relation.csv'));
 	Stock.loadFromCSV(path.join(csvFilesPath, 'Stock.csv'));
 
+	//TODO: Poll Redis every few seconds and display progress
+	//TODO: Return once complete
+
 	callback(null);
 }
