@@ -167,9 +167,12 @@ function importCSVFilesIn(csvFilesPath, callback) {
 function createNodeRelationships(callback) {
   sys.puts('Creating node relationships')
 
-  createIndividualRelationships();
-  createIndividualStockRelationships();
-  createIndividualPartnerRelationships();
+  Individual.getAll(function(error, individuals) {
+    createIndividualRelationships();
+    createIndividualStockRelationships();
+    createIndividualPartnerRelationships(individuals);
+    createIndividualTaxReturnRelationships(individuals);
+  });
 }
 
 function createIndividualRelationships() {
@@ -218,23 +221,40 @@ function getStock(id, stocks) {
   return new Stock(stock._node);
 }
 
-function createIndividualPartnerRelationships() {
+function createIndividualPartnerRelationships(individuals) {
   Partner.getAll(function(error, partners) {
-    Individual.getAll(function(error, individuals) {
-      for (var i = 0; i < individuals.length; i++) {
-        var individual = individuals[i];
-        var partnerId = individual.ManagedBy;
-        var partner = getPartner(partnerId, partners);
+    for (var i = 0; i < individuals.length; i++) {
+      var individual = individuals[i];
+      var partnerId = individual.ManagedBy;
+      var partner = getPartner(partnerId, partners);
 
-        individual.relateToPartner(partner, function(error, relationship) {
-          sys.puts('Relationship -> ' + JSON.stringify(relationship));
-        });
-      }
-    });
+      individual.relateToPartner(partner, function(error, relationship) {
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+      });
+    }
   });
 }
 
 function getPartner(id, partners) {
   var partner = query('Id').is(id).limit(1).on(partners)[0];
   return new Partner(partner._node);
+}
+
+function createIndividualTaxReturnRelationships(individuals) {
+  IndividualTaxReturn.getAll(function(error, individualTaxReturns) {
+    for (var i = 0; i < individualTaxReturns.length; i++) {
+      var taxReturn = individualTaxReturns[i];
+      var personId = taxReturn.PersonId;
+      var individual = getIndividual(personId, individuals);
+
+      individual.relateToTaxReturn(taxReturn, function(error, relationship) {
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+      });
+    }
+  });
+}
+
+function getIndividual(id, individuals) {
+  var individual = query('Id').is(id).limit(1).on(individuals)[0];
+  return new Individual(individual._node);
 }

@@ -163,3 +163,9 @@ Individual.prototype.relateToPartner = function(partner, callback) {
     callback(err, relationship);
   });
 };
+
+Individual.prototype.relateToTaxReturn = function(taxReturn, callback) {
+  this._node.createRelationshipTo(taxReturn._node, 'HAS_A', {}, function (err, relationship) {
+    callback(err, relationship);
+  });
+};
