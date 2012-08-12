@@ -141,9 +141,17 @@ Individual.relateTwoIndividuals = function(personId1, personId2, relationshipTyp
 
   Individual.getById(personId1, function(error, person1) {
     Individual.getById(personId2, function(error, person2) {
-      person1._node.createRelationshipTo(person2._node, relationshipType, {}, function (error, relationship) {
+      person1._node.createRelationshipTo(person2._node, 'IS_RELATED_TO', { type: relationshipType }, function (error, relationship) {
         callback(error, relationship);
       });
+    });
+  });
+};
+
+Individual.relateIndividualWithStock = function(personId, stock, quantity, callback) {
+  Individual.getById(personId, function(error, person) {
+    person._node.createRelationshipTo(stock._node, 'OWNS', { quantity: quantity }, function (error, relationship) {
+      callback(error, relationship);
     });
   });
 };

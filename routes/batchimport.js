@@ -168,6 +168,7 @@ function createNodeRelationships(callback) {
   sys.puts('Creating node relationships')
 
   createIndividualRelationships();
+  createIndividualStockRelationships();
 }
 
 function createIndividualRelationships() {
@@ -189,6 +190,29 @@ function createIndividualRelationships() {
 }
 
 function getRelation(id, relations) {
-  var relationNode = query('Id').is(id).limit(1).on(relations)[0];
-  return new Relation(relationNode._node);
+  var relation = query('Id').is(id).limit(1).on(relations)[0];
+  return new Relation(relation._node);
+}
+
+function createIndividualStockRelationships() {
+  Stock.getAll(function(error, stocks) {
+    IndividualStock.getAll(function(error, individualStocks) {
+      for (var i = 0; i < individualStocks.length; i++) {
+        var individualStock = individualStocks[i];
+        var stockId = individualStock.StockId;
+        var stock = getStock(stockId, stocks);
+        var personId = individualStock.PersonId;
+        var quantity = individualStock.Quantity;
+
+        Individual.relateIndividualWithStock(personId, stock, quantity, function(error, relationship) {
+          sys.puts('Relationship -> ' + JSON.stringify(relationship));  
+        });
+      }
+    });
+  });
+}
+
+function getStock(id, stocks) {
+  var stock = query('Id').is(id).limit(1).on(stocks)[0];
+  return new Stock(stock._node);
 }
