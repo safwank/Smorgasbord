@@ -21,6 +21,7 @@ var Business = module.exports = function Business(_node) {
 // Pass-through Business properties
 
 util.proxyProperty(Business, 'Id', true);
+util.proxyProperty(Business, 'ManagedBy', true);
 util.proxyProperty(Business, 'Name', true);
 util.proxyProperty(Business, 'ACN', true);
 util.proxyProperty(Business, 'Phone', true);
@@ -31,6 +32,7 @@ util.proxyProperty(Business, 'Postcode', true);
 util.proxyProperty(Business, 'City', true);
 util.proxyProperty(Business, 'State', true);
 util.proxyProperty(Business, 'Type', true);
+util.proxyProperty(Business, 'Reserves', true);
 
 // Private functions
 
@@ -88,5 +90,34 @@ Business.getAll = function (callback) {
     });
     
     callback(null, businesses);
+  });
+};
+
+Business.getById = function(id, callback) {
+  var query = [
+    'START business=node:INDEX_NAME(INDEX_KEY="INDEX_VAL")',
+    'WHERE business.Id="BUSINESS_ID"',
+    'RETURN business',
+    'LIMIT 1'
+  ].join('\n')
+    .replace('INDEX_NAME', INDEX_NAME)
+    .replace('INDEX_KEY', INDEX_KEY)
+    .replace('INDEX_VAL', INDEX_VAL)
+    .replace('BUSINESS_ID', id);
+
+  //TODO: Figure out why the params are being ignored
+  var params = { businessId: id };
+
+  db.query(query, params, function(err, results) {
+    if (err) return callback(err);
+
+    var business = results[0] && results[0]['business'];
+    callback(null, new Business(business));
+  });
+};
+
+Business.prototype.relateToPartner = function(partner, callback) {
+  this._node.createRelationshipTo(partner._node, 'MANAGED_BY', {}, function (error, relationship) {
+    callback(error, relationship);
   });
 };

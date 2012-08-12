@@ -174,6 +174,10 @@ function createNodeRelationships(callback) {
     createIndividualTaxReturnRelationships(individuals);
     createIndividualReferralRelationships(individuals);
   });
+
+  Business.getAll(function(error, businesses) {
+    createBusinessPartnerRelationships(businesses);
+  });
 }
 
 function createIndividualRelationships() {
@@ -277,4 +281,19 @@ function createIndividualReferralRelationships(individuals) {
 function getReferral(id, referrals) {
   var referral = query('Id').is(id).limit(1).on(referrals)[0];
   return new Referral(referral._node);
+}
+
+function createBusinessPartnerRelationships(businesses) {
+  //TODO: Hmmm, partners are being retrieved twice
+  Partner.getAll(function(error, partners) {
+    for (var i = 0; i < businesses.length; i++) {
+      var business = businesses[i];
+      var partnerId = business.ManagedBy;
+      var partner = getPartner(partnerId, partners);
+
+      business.relateToPartner(partner, function(error, relationship) {
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+      });
+    }
+  });
 }
