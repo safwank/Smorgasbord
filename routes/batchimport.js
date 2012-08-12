@@ -172,6 +172,7 @@ function createNodeRelationships(callback) {
     createIndividualStockRelationships();
     createIndividualPartnerRelationships(individuals);
     createIndividualTaxReturnRelationships(individuals);
+    createIndividualReferralRelationships(individuals);
   });
 }
 
@@ -257,4 +258,23 @@ function createIndividualTaxReturnRelationships(individuals) {
 function getIndividual(id, individuals) {
   var individual = query('Id').is(id).limit(1).on(individuals)[0];
   return new Individual(individual._node);
+}
+
+function createIndividualReferralRelationships(individuals) {
+  Referral.getAll(function(error, referrals) {
+    for (var i = 0; i < individuals.length; i++) {
+      var individual = individuals[i];
+      var referralId = individual.ReferralId;
+      var referral = getReferral(referralId, referrals);
+
+      individual.relateToReferral(referral, function(error, relationship) {
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+      });
+    }
+  });
+}
+
+function getReferral(id, referrals) {
+  var referral = query('Id').is(id).limit(1).on(referrals)[0];
+  return new Referral(referral._node);
 }

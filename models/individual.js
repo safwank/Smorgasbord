@@ -106,6 +106,7 @@ Individual.getById = function(id, callback) {
     .replace('INDEX_VAL', INDEX_VAL)
     .replace('PERSON_ID', id);
 
+  //TODO: Figure out why the params are being ignored
   var params = { personId: id };
 
   db.query(query, params, function(err, results) {
@@ -159,13 +160,19 @@ Individual.relateIndividualWithStock = function(personId, stock, quantity, callb
 };
 
 Individual.prototype.relateToPartner = function(partner, callback) {
-  this._node.createRelationshipTo(partner._node, 'MANAGED_BY', {}, function (err, relationship) {
-    callback(err, relationship);
+  this._node.createRelationshipTo(partner._node, 'MANAGED_BY', {}, function (error, relationship) {
+    callback(error, relationship);
   });
 };
 
 Individual.prototype.relateToTaxReturn = function(taxReturn, callback) {
-  this._node.createRelationshipTo(taxReturn._node, 'HAS_A', {}, function (err, relationship) {
-    callback(err, relationship);
+  this._node.createRelationshipTo(taxReturn._node, 'HAS_A', {}, function (error, relationship) {
+    callback(error, relationship);
   });
 };
+
+Individual.prototype.relateToReferral = function(referral, callback) {
+  this._node.createRelationshipTo(referral._node, 'REFERRED_THROUGH', {}, function (error, relationship) {
+    callback(error, relationship);
+  });
+}
