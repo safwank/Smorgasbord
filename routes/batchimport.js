@@ -169,6 +169,7 @@ function createNodeRelationships(callback) {
 
   createIndividualRelationships();
   createIndividualStockRelationships();
+  createIndividualPartnerRelationships();
 }
 
 function createIndividualRelationships() {
@@ -205,7 +206,7 @@ function createIndividualStockRelationships() {
         var quantity = individualStock.Quantity;
 
         Individual.relateIndividualWithStock(personId, stock, quantity, function(error, relationship) {
-          sys.puts('Relationship -> ' + JSON.stringify(relationship));  
+          sys.puts('Relationship -> ' + JSON.stringify(relationship));
         });
       }
     });
@@ -215,4 +216,25 @@ function createIndividualStockRelationships() {
 function getStock(id, stocks) {
   var stock = query('Id').is(id).limit(1).on(stocks)[0];
   return new Stock(stock._node);
+}
+
+function createIndividualPartnerRelationships() {
+  Partner.getAll(function(error, partners) {
+    Individual.getAll(function(error, individuals) {
+      for (var i = 0; i < individuals.length; i++) {
+        var individual = individuals[i];
+        var partnerId = individual.ManagedBy;
+        var partner = getPartner(partnerId, partners);
+
+        individual.relateToPartner(partner, function(error, relationship) {
+          sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        });
+      }
+    });
+  });
+}
+
+function getPartner(id, partners) {
+  var partner = query('Id').is(id).limit(1).on(partners)[0];
+  return new Partner(partner._node);
 }

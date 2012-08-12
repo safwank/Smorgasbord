@@ -18,11 +18,13 @@ var Individual = module.exports = function Individual(_node) {
 
 // Pass-through Individual properties
 util.proxyProperty(Individual, 'Id', true);
-util.proxyProperty(Individual, 'ReportTo', true);
+util.proxyProperty(Individual, 'ManagedBy', true);
 util.proxyProperty(Individual, 'Title', true);
 util.proxyProperty(Individual, 'FirstName', true);
 util.proxyProperty(Individual, 'LastName', true);
+util.proxyProperty(Individual, 'Gender', true);
 util.proxyProperty(Individual, 'DOB', true);
+util.proxyProperty(Individual, 'TFN', true);
 util.proxyProperty(Individual, 'Mobile', true);
 util.proxyProperty(Individual, 'Email', true);
 util.proxyProperty(Individual, 'Twitter', true);
@@ -32,7 +34,7 @@ util.proxyProperty(Individual, 'AddressLine2', true);
 util.proxyProperty(Individual, 'Postcode', true);
 util.proxyProperty(Individual, 'City', true);
 util.proxyProperty(Individual, 'State', true);
-util.proxyProperty(Individual, 'Income', true);
+util.proxyProperty(Individual, 'ReferralId', true);
 
 // Private functions
 
@@ -153,5 +155,11 @@ Individual.relateIndividualWithStock = function(personId, stock, quantity, callb
     person._node.createRelationshipTo(stock._node, 'OWNS', { quantity: quantity }, function (error, relationship) {
       callback(error, relationship);
     });
+  });
+};
+
+Individual.prototype.relateToPartner = function(partner, callback) {
+  this._node.createRelationshipTo(partner._node, 'MANAGED_BY', {}, function (err, relationship) {
+    callback(err, relationship);
   });
 };
