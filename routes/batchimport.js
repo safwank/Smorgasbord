@@ -6,6 +6,7 @@ var sys = require('sys'),
   io = require('socket.io').listen(app),
   uuid = require('node-uuid'),
   query = require('array-query'),
+  async = require('async'),
   redisUtil = require('../common/redisutil');
 
 var Business = require('../models/business'),
@@ -39,16 +40,18 @@ exports.importCSVData = function(request, response, next) {
   response.render('batchimportstatus');
 };
 
-//TODO: Re-factor this to use promises
 function importCSVData(callback) {
-  downloadZipFile(function(error, zipFile) {
-    unzipCSVFilesIn(zipFile, function(error, csvFilesPath) {
-      importCSVFilesIn(csvFilesPath, function(error) {
-        createNodeRelationships(function(error) {
-          callback(null);
-        });
-      });
-    });
+  sys.puts('Running batch import');
+
+  async.waterfall([
+    downloadZipFile,
+    unzipCSVFilesIn,
+    importCSVFilesIn,
+    createNodeRelationships
+  ], function (err, result) {
+    if (err) throw Error(err);
+
+    sys.puts('Finished running batch import');
   });
 }
 
