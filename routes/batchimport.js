@@ -39,6 +39,7 @@ exports.importCSVData = function(request, response, next) {
   response.render('batchimportstatus');
 };
 
+//TODO: Re-factor this to use promises
 function importCSVData(callback) {
   downloadZipFile(function(error, zipFile) {
     unzipCSVFilesIn(zipFile, function(error, csvFilesPath) {
@@ -164,33 +165,35 @@ function importCSVFilesIn(csvFilesPath, callback) {
   }, 1000);
 }
 
+//TODO: Re-factor this to use promises
 function createNodeRelationships(callback) {
   sys.puts('Creating node relationships')
 
   Individual.getAll(function(error, individuals) {
-    createIndividualRelationships();
+    createIndividualRelationships(individuals);
     createIndividualStockRelationships();
     createIndividualPartnerRelationships(individuals);
     createIndividualTaxReturnRelationships(individuals);
     createIndividualReferralRelationships(individuals);
   });
-
+  
   Business.getAll(function(error, businesses) {
     createBusinessPartnerRelationships(businesses);
+    createBusinessTaxReturnRelationships(businesses);
   });
 }
 
-function createIndividualRelationships() {
+function createIndividualRelationships(individuals) {
   Relation.getAll(function(error, relations) {
     IndividualRelation.getAll(function(error, individualRelations) {
       for (var i = 0; i < individualRelations.length; i++) {
         var individualRelation = individualRelations[i];
         var relationId = individualRelation.RelatedAs;
-        var personId1 = individualRelation.PersonId1;
-        var personId2 = individualRelation.PersonId2;
         var relation = getRelation(relationId, relations);
+        var person1 = getIndividual(individualRelation.PersonId1, individuals);
+        var person2 = getIndividual(individualRelation.PersonId2, individuals);
 
-        Individual.relateTwoIndividuals(personId1, personId2, relation.Type, function(error, relationship) {
+        person1.relateToIndividual(person2, relation.Type, function(error, relationship) {
           sys.puts('Relationship -> ' + JSON.stringify(relationship));
         });
       }
@@ -201,6 +204,11 @@ function createIndividualRelationships() {
 function getRelation(id, relations) {
   var relation = query('Id').is(id).limit(1).on(relations)[0];
   return new Relation(relation._node);
+}
+
+function getIndividual(id, individuals) {
+  var individual = query('Id').is(id).limit(1).on(individuals)[0];
+  return new Individual(individual._node);
 }
 
 function createIndividualStockRelationships() {
@@ -259,11 +267,6 @@ function createIndividualTaxReturnRelationships(individuals) {
   });
 }
 
-function getIndividual(id, individuals) {
-  var individual = query('Id').is(id).limit(1).on(individuals)[0];
-  return new Individual(individual._node);
-}
-
 function createIndividualReferralRelationships(individuals) {
   Referral.getAll(function(error, referrals) {
     for (var i = 0; i < individuals.length; i++) {
@@ -296,4 +299,23 @@ function createBusinessPartnerRelationships(businesses) {
       });
     }
   });
+}
+
+function createBusinessTaxReturnRelationships(businesses) {
+  BusinessTaxReturn.getAll(function(error, businessTaxReturns) {
+    for (var i = 0; i < businessTaxReturns.length; i++) {
+      var taxReturn = businessTaxReturns[i];
+      var businessId = taxReturn.BusinessId;
+      var business = getBusiness(businessId, businesses);
+
+      business.relateToTaxReturn(taxReturn, function(error, relationship) {
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+      });
+    }
+  });
+}
+
+function getBusiness(id, businesses) {
+  var business = query('Id').is(id).limit(1).on(businesses)[0];
+  return new Business(business._node);
 }

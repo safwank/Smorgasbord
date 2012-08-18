@@ -117,7 +117,15 @@ Individual.getById = function(id, callback) {
   });
 };
 
-Individual.relateTwoIndividuals = function(personId1, personId2, relationshipType, callback) {
+Individual.relateIndividualWithStock = function(personId, stock, quantity, callback) {
+  Individual.getById(personId, function(error, person) {
+    person._node.createRelationshipTo(stock._node, 'OWNS', { quantity: quantity }, function (error, relationship) {
+      callback(error, relationship);
+    });
+  });
+};
+
+Individual.prototype.relateToIndividual = function(person, relationshipType, callback) {
   /*
   var query = [
     'START person1=node:INDEX_NAME(INDEX_KEY="INDEX_VAL"), person2=node:INDEX_NAME(INDEX_KEY="INDEX_VAL")', 
@@ -141,23 +149,12 @@ Individual.relateTwoIndividuals = function(personId1, personId2, relationshipTyp
     var relationship = results[0] && results[0]['relationship'];
     callback(null, relationship);
   });*/
-
-  Individual.getById(personId1, function(error, person1) {
-    Individual.getById(personId2, function(error, person2) {
-      person1._node.createRelationshipTo(person2._node, 'IS_RELATED_TO', { type: relationshipType }, function (error, relationship) {
-        callback(error, relationship);
-      });
-    });
+  
+  this._node.createRelationshipTo(person._node, 'IS_RELATED_TO', { type: relationshipType }, function (error, relationship) {
+    callback(error, relationship);
   });
 };
 
-Individual.relateIndividualWithStock = function(personId, stock, quantity, callback) {
-  Individual.getById(personId, function(error, person) {
-    person._node.createRelationshipTo(stock._node, 'OWNS', { quantity: quantity }, function (error, relationship) {
-      callback(error, relationship);
-    });
-  });
-};
 
 Individual.prototype.relateToPartner = function(partner, callback) {
   this._node.createRelationshipTo(partner._node, 'MANAGED_BY', {}, function (error, relationship) {

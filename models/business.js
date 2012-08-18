@@ -121,3 +121,9 @@ Business.prototype.relateToPartner = function(partner, callback) {
     callback(error, relationship);
   });
 };
+
+Business.prototype.relateToTaxReturn = function(taxReturn, callback) {
+  this._node.createRelationshipTo(taxReturn._node, 'HAS_A', {}, function (error, relationship) {
+    callback(error, relationship);
+  });
+};
