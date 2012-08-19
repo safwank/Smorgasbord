@@ -44,14 +44,15 @@ function importCSVData(callback) {
   sys.puts('Running batch import');
 
   async.waterfall([
-    downloadZipFile,
-    unzipCSVFilesIn,
-    importCSVFilesIn,
+    downloadZipFile, 
+    unzipCSVFilesIn, 
+    importCSVFilesIn, 
     createNodeRelationships
-  ], function (err, result) {
-    if (err) throw Error(err);
+  ], function(error, result) {
+    if (error) return callback(error);
 
     sys.puts('Finished running batch import');
+    callback(null);
   });
 }
 
@@ -168,38 +169,90 @@ function importCSVFilesIn(csvFilesPath, callback) {
   }, 1000);
 }
 
-//TODO: Re-factor this to use promises
-function createNodeRelationships(callback) {
-  sys.puts('Creating node relationships')
+function createNodeRelationships(mainCallback) {
+  sys.puts('Creating node relationships');
 
-  Individual.getAll(function(error, individuals) {
-    createIndividualRelationships(individuals);
-    createIndividualStockRelationships();
-    createIndividualPartnerRelationships(individuals);
-    createIndividualTaxReturnRelationships(individuals);
-    createIndividualReferralRelationships(individuals);
-  });
-  
-  Business.getAll(function(error, businesses) {
-    createBusinessPartnerRelationships(businesses);
-    createBusinessTaxReturnRelationships(businesses);
+  async.parallel([
+    function(individualCallback) {
+      async.waterfall([
+        Individual.getAll
+      ], function(error, individuals) {
+        async.parallel([
+          function(callback) {
+            createIndividualRelationships(individuals, callback);
+          },
+          function(callback) {
+            createIndividualStockRelationships(individuals, callback);
+          },
+          function(callback) {
+            createIndividualPartnerRelationships(individuals, callback);
+          },
+          function(callback) {
+            createIndividualTaxReturnRelationships(individuals, callback);
+          },
+          function(callback) {
+            createIndividualReferralRelationships(individuals, callback);
+          }
+        ], function(error, results) {
+          if (error) return individualCallback(error);
+
+          individualCallback(null);
+        });
+      })
+    },
+    function(businessCallback) {
+      async.waterfall([
+        Business.getAll
+      ], function(error, businesses) {
+        async.parallel([
+          function(callback) {
+            createBusinessPartnerRelationships(businesses, callback);
+          },
+          function(callback) {
+            createBusinessTaxReturnRelationships(businesses, callback);
+          }
+        ], function(error, results) {
+          if (error) return businessCallback(error);
+
+          businessCallback(null);
+        });
+      })
+    }
+  ], 
+  function(error, results) {
+    if (error) return mainCallback(error);
+
+    sys.puts('Finished creating node relationships');
+    mainCallback(null);
   });
 }
 
-function createIndividualRelationships(individuals) {
-  Relation.getAll(function(error, relations) {
-    IndividualRelation.getAll(function(error, individualRelations) {
-      for (var i = 0; i < individualRelations.length; i++) {
-        var individualRelation = individualRelations[i];
-        var relationId = individualRelation.RelatedAs;
-        var relation = getRelation(relationId, relations);
-        var person1 = getIndividual(individualRelation.PersonId1, individuals);
-        var person2 = getIndividual(individualRelation.PersonId2, individuals);
+function createIndividualRelationships(individuals, mainCallback) {
+  async.parallel({
+    relations: Relation.getAll,
+    individualRelations: IndividualRelation.getAll
+  }, function(mainError, result) {
+    if (mainError) return mainCallback(mainError);
 
-        person1.relateToIndividual(person2, relation.Type, function(error, relationship) {
-          sys.puts('Relationship -> ' + JSON.stringify(relationship));
-        });
-      }
+    var relations = result.relations;
+    var individualRelations = result.individualRelations;
+
+    async.forEach(individualRelations, function(individualRelation, iterationCallback) {
+      var relationId = individualRelation.RelatedAs;
+      var relation = getRelation(relationId, relations);
+      var person1 = getIndividual(individualRelation.PersonId1, individuals);
+      var person2 = getIndividual(individualRelation.PersonId2, individuals);
+
+      person1.relateToIndividual(person2, relation.Type, function(error, relationship) {
+        if (error) return iterationCallback(error);
+
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
+      });
+    }, function(error) {
+      if (error) return mainCallback(error);
+
+      mainCallback(null);
     });
   });
 }
@@ -214,20 +267,30 @@ function getIndividual(id, individuals) {
   return new Individual(individual._node);
 }
 
-function createIndividualStockRelationships() {
-  Stock.getAll(function(error, stocks) {
-    IndividualStock.getAll(function(error, individualStocks) {
-      for (var i = 0; i < individualStocks.length; i++) {
-        var individualStock = individualStocks[i];
-        var stockId = individualStock.StockId;
-        var stock = getStock(stockId, stocks);
-        var personId = individualStock.PersonId;
-        var quantity = individualStock.Quantity;
+function createIndividualStockRelationships(individuals, mainCallback) {
+  async.parallel({
+    stocks: Stock.getAll,
+    individualStocks: IndividualStock.getAll
+  }, function(mainError, result) {
+    var stocks = result.stocks;
+    var individualStocks = result.individualStocks;
 
-        Individual.relateIndividualWithStock(personId, stock, quantity, function(error, relationship) {
-          sys.puts('Relationship -> ' + JSON.stringify(relationship));
-        });
-      }
+    async.forEach(individualStocks, function(individualStock, iterationCallback) {
+      var stockId = individualStock.StockId;
+      var stock = getStock(stockId, stocks);
+      var person = getIndividual(individualStock.PersonId, individuals);
+      var quantity = individualStock.Quantity;
+
+      person.relateToStock(stock, quantity, function(error, relationship) {
+        if (error) return iterationCallback(error); 
+
+        sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
+      });
+    }, function(error) {
+      if (error) return mainCallback(error); 
+
+      mainCallback(null);
     });
   });
 }
@@ -237,17 +300,23 @@ function getStock(id, stocks) {
   return new Stock(stock._node);
 }
 
-function createIndividualPartnerRelationships(individuals) {
-  Partner.getAll(function(error, partners) {
-    for (var i = 0; i < individuals.length; i++) {
-      var individual = individuals[i];
+function createIndividualPartnerRelationships(individuals, mainCallback) {
+  Partner.getAll(function(mainError, partners) {
+    async.forEach(individuals, function(individual, iterationCallback) {
       var partnerId = individual.ManagedBy;
       var partner = getPartner(partnerId, partners);
 
       individual.relateToPartner(partner, function(error, relationship) {
+        if (error) return iterationCallback(error);
+
         sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
       });
-    }
+    }, function(error) {
+      if (error) return mainCallback(error);
+
+      mainCallback(null);
+    });
   });
 }
 
@@ -256,31 +325,43 @@ function getPartner(id, partners) {
   return new Partner(partner._node);
 }
 
-function createIndividualTaxReturnRelationships(individuals) {
-  IndividualTaxReturn.getAll(function(error, individualTaxReturns) {
-    for (var i = 0; i < individualTaxReturns.length; i++) {
-      var taxReturn = individualTaxReturns[i];
+function createIndividualTaxReturnRelationships(individuals, mainCallback) {
+  IndividualTaxReturn.getAll(function(mainError, individualTaxReturns) {
+    async.forEach(individualTaxReturns, function(taxReturn, iterationCallback) {
       var personId = taxReturn.PersonId;
       var individual = getIndividual(personId, individuals);
 
       individual.relateToTaxReturn(taxReturn, function(error, relationship) {
+        if (error) return iterationCallback(error); 
+
         sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
       });
-    }
+    }, function(error) {
+      if (error) return mainCallback(error);
+
+      mainCallback(null);
+    });
   });
 }
 
-function createIndividualReferralRelationships(individuals) {
+function createIndividualReferralRelationships(individuals, mainCallback) {
   Referral.getAll(function(error, referrals) {
-    for (var i = 0; i < individuals.length; i++) {
-      var individual = individuals[i];
+    async.forEach(individuals, function(individual, iterationCallback) {
       var referralId = individual.ReferralId;
       var referral = getReferral(referralId, referrals);
 
       individual.relateToReferral(referral, function(error, relationship) {
+        if (error) return iterationCallback(error); 
+
         sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
       });
-    }
+    }, function(error) {
+      if (error) return mainCallback(error);
+
+      mainCallback(null);
+    });
   });
 }
 
@@ -289,32 +370,44 @@ function getReferral(id, referrals) {
   return new Referral(referral._node);
 }
 
-function createBusinessPartnerRelationships(businesses) {
+function createBusinessPartnerRelationships(businesses, mainCallback) {
   //TODO: Hmmm, partners are being retrieved twice
   Partner.getAll(function(error, partners) {
-    for (var i = 0; i < businesses.length; i++) {
-      var business = businesses[i];
+    async.forEach(businesses, function(business, iterationCallback) {
       var partnerId = business.ManagedBy;
       var partner = getPartner(partnerId, partners);
 
       business.relateToPartner(partner, function(error, relationship) {
+        if (error) return iterationCallback(error); 
+
         sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
       });
-    }
+    }, function(error) {
+      if (error) return mainCallback(error);
+
+      mainCallback(null);
+    });
   });
 }
 
-function createBusinessTaxReturnRelationships(businesses) {
+function createBusinessTaxReturnRelationships(businesses, mainCallback) {
   BusinessTaxReturn.getAll(function(error, businessTaxReturns) {
-    for (var i = 0; i < businessTaxReturns.length; i++) {
-      var taxReturn = businessTaxReturns[i];
+    async.forEach(businessTaxReturns, function(taxReturn, iterationCallback) {
       var businessId = taxReturn.BusinessId;
       var business = getBusiness(businessId, businesses);
 
       business.relateToTaxReturn(taxReturn, function(error, relationship) {
+        if (error) return iterationCallback(error); 
+
         sys.puts('Relationship -> ' + JSON.stringify(relationship));
+        iterationCallback(null);
       });
-    }
+    }, function(error) {
+      if (error) return mainCallback(error);
+
+      mainCallback(null);
+    });
   });
 }
 
