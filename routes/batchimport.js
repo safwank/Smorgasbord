@@ -173,58 +173,52 @@ function createNodeRelationships(mainCallback) {
   sys.puts('Creating node relationships');
 
   async.parallel([
-    function(individualCallback) {
-      async.waterfall([
-        Individual.getAll
-      ], function(error, individuals) {
-        async.parallel([
-          function(callback) {
-            createIndividualRelationships(individuals, callback);
-          },
-          function(callback) {
-            createIndividualStockRelationships(individuals, callback);
-          },
-          function(callback) {
-            createIndividualPartnerRelationships(individuals, callback);
-          },
-          function(callback) {
-            createIndividualTaxReturnRelationships(individuals, callback);
-          },
-          function(callback) {
-            createIndividualReferralRelationships(individuals, callback);
-          }
-        ], function(error, results) {
-          if (error) return individualCallback(error);
-
-          individualCallback(null);
-        });
-      })
-    },
-    function(businessCallback) {
-      async.waterfall([
-        Business.getAll
-      ], function(error, businesses) {
-        async.parallel([
-          function(callback) {
-            createBusinessPartnerRelationships(businesses, callback);
-          },
-          function(callback) {
-            createBusinessTaxReturnRelationships(businesses, callback);
-          }
-        ], function(error, results) {
-          if (error) return businessCallback(error);
-
-          businessCallback(null);
-        });
-      })
-    }
-  ], 
-  function(error, results) {
+    createRelationshipsForIndividuals,
+    createRelationshipsForBusinesses
+  ], function(error, results) {
     if (error) return mainCallback(error);
 
     sys.puts('Finished creating node relationships');
     mainCallback(null);
   });
+}
+
+function createRelationshipsForIndividuals(individualCallback) {
+  async.waterfall([Individual.getAll], function(error, individuals) {
+    async.parallel([
+      function(callback) {
+        createIndividualRelationships(individuals, callback);
+      }, function(callback) {
+        createIndividualStockRelationships(individuals, callback);
+      }, function(callback) {
+        createIndividualPartnerRelationships(individuals, callback);
+      }, function(callback) {
+        createIndividualTaxReturnRelationships(individuals, callback);
+      }, function(callback) {
+        createIndividualReferralRelationships(individuals, callback);
+      }
+    ], function(error, results) {
+      if (error) return individualCallback(error);
+
+      individualCallback(null);
+    });
+  })
+}
+
+function createRelationshipsForBusinesses(mainCallBack) {
+  async.waterfall([Business.getAll], function(error, businesses) {
+    async.parallel([
+      function(callback) {
+        createBusinessPartnerRelationships(businesses, callback);
+      }, function(callback) {
+        createBusinessTaxReturnRelationships(businesses, callback);
+      }
+    ], function(error, results) {
+      if (error) return businessCallback(error);
+
+      mainCallBack(null);
+    });
+  })
 }
 
 function createIndividualRelationships(individuals, mainCallback) {
