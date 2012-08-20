@@ -171,6 +171,9 @@ function importCSVFilesIn(csvFilesPath, callback) {
 
 function createNodeRelationships(mainCallback) {
   sys.puts('Creating node relationships');
+  if (thisSocket) thisSocket.emit('createRelationshipsProgress', {
+    progress: 'Creating node relationships...'
+  });
 
   async.parallel([
     createRelationshipsForIndividuals,
@@ -179,6 +182,10 @@ function createNodeRelationships(mainCallback) {
     if (error) return mainCallback(error);
 
     sys.puts('Finished creating node relationships');
+    if (thisSocket) thisSocket.emit('createRelationshipsProgress', {
+      progress: 'Finished creating node relationships'
+    });
+
     mainCallback(null);
   });
 }

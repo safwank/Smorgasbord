@@ -18,9 +18,12 @@ head
          var progress = data.progress
 
          if (progress > 0)
-            $('#importCSVProgress').text('Importing ' + data.progress + ' nodes');
+            $('#importCSVProgress').text('Importing ' + data.progress + ' nodes. This may take a few minutes.');
          else
             $('#importCSVProgress').text('Finished importing CSV files');
+      })
+      socket.on('createRelationshipsProgress', function (data) {
+         $('#createRelationshipsProgress').text(data.progress);
       })
 
 body
@@ -34,4 +37,7 @@ body
 
    p Step 3 - Import CSV files
    #importCSVProgress
+
+   p Step 4 - Create relationships
+   #createRelationshipsProgress
    
