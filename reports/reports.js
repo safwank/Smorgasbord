@@ -2,8 +2,6 @@ var neo4j = require('neo4j'),
   db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474'),
   sys = require('sys');
 
-var Referral = require('../models/referral');
-
 exports.getDistributionOfReferrals = function(callback) {
   var query = [
     'START referral=node:nodes(type="referral")', 
@@ -16,14 +14,15 @@ exports.getDistributionOfReferrals = function(callback) {
 
     var referrals = [];
 
-    for (var i = 0; i < results.length; i++) {
-      var currentReferral = {
-        type: results[i]['referral'].data.Type,
-        count: results[i]['count(*)']
+    results.forEach(function(result) {
+      var referral = {
+        type: result['referral'].data.Type,
+        count: result['count(*)']
       };
-      referrals.push(currentReferral);
-    }
+      referrals.push(referral);
+    });
 
     return callback(null, referrals);
   });
 };
+
