@@ -26,3 +26,28 @@ exports.getDistributionOfReferrals = function(callback) {
   });
 };
 
+exports.getDistributionOfPartners = function(callback) {
+  var query = [
+    'START partner=node:nodes(type="partner")', 
+    'MATCH partner-[rel:MANAGED_BY]-managed', 
+    'RETURN partner, count(*)'
+  ].join('\n');
+
+  db.query(query, null, function(error, results) {
+    if (error) return callback(error);
+
+    var partners = [];
+
+    results.forEach(function(result) {
+      var resultData = result['partner'].data;
+      var partner = {
+        name: resultData.FirstName + ' ' + resultData.LastName,
+        count: result['count(*)']
+      };
+      partners.push(partner);
+    });
+
+    return callback(null, partners);
+  });
+};
+
