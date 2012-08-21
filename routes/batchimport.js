@@ -40,6 +40,7 @@ exports.importCSVData = function(request, response, next) {
   response.render('batchimportstatus');
 };
 
+//TODO: move this to a different file
 function importCSVData(callback) {
   sys.puts('Running batch import');
 
