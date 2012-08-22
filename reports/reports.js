@@ -51,3 +51,44 @@ exports.getDistributionOfPartners = function(callback) {
   });
 };
 
+exports.getTopBusinessesByRevenue = function(callback) {
+  var query = [
+    'START business=node:nodes(type="business")',
+    'MATCH business-[rel:HAS_A]->taxReturn',
+    'RETURN business.Name AS name, taxReturn.Revenue as revenue',
+    'ORDER BY length(taxReturn.Revenue) DESC, taxReturn.Revenue DESC LIMIT 10'
+  ].join('\n');
+
+  db.query(query, null, function(error, results) {
+    if (error) return callback(error);
+
+    var businesses = [];
+
+    results.forEach(function(result) {
+      businesses.push(result);
+    });
+
+    return callback(null, businesses);
+  });
+};
+
+exports.getTopIndividualsByIncome = function(callback) {
+  var query = [
+    'START individual=node:nodes(type="individual")',
+    'MATCH individual-[rel:HAS_A]->taxReturn',
+    'RETURN individual.FirstName AS firstName, individual.LastName as lastName, taxReturn.Income as income',
+    'ORDER BY length(taxReturn.Income) DESC, taxReturn.Income DESC LIMIT 10'
+  ].join('\n');
+
+  db.query(query, null, function(error, results) {
+    if (error) return callback(error);
+
+    var individuals = [];
+
+    results.forEach(function(result) {
+      individuals.push(result);
+    });
+
+    return callback(null, individuals);
+  });
+};

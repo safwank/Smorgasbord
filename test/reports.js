@@ -26,4 +26,29 @@ module.exports = testCase({
       test.done();
     });
   },
+  'getTopBusinessesByRevenue should return top 10 businesses by revenue in descending order': function(test) {
+    reports.getTopBusinessesByRevenue(function(error, results) {
+      test.ok(results.length === 10);
+
+      results.forEach(function(result) {
+        test.ok(result.hasOwnProperty('name'));
+        test.ok(result.hasOwnProperty('revenue'));
+      });
+
+      test.done();
+    });
+  },
+  'getTopIndividualsByIncome should return top 10 individuals by income in descending order': function(test) {
+    reports.getTopIndividualsByIncome(function(error, results) {
+      test.ok(results.length === 10);
+
+      results.forEach(function(result) {
+        test.ok(result.hasOwnProperty('firstName'));
+        test.ok(result.hasOwnProperty('lastName'));
+        test.ok(result.hasOwnProperty('income'));
+      });
+
+      test.done();
+    });
+  }
 });
