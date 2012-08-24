@@ -112,7 +112,7 @@ header {
 #logo .light {
   color: #3f576e;
 }
-#nav {
+nav {
   position: relative;
   z-index: 2;
   border: 1px solid #1a2735;
@@ -120,18 +120,18 @@ header {
   border-left: none;
   padding: 7px 0;
 }
-#nav ul {
+nav ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-#nav ul li {
+nav ul li {
   float: left;
   display: inline;
   margin: 0;
   padding: 0;
 }
-#nav ul li a {
+nav ul li a {
   font-size: 19px;
   font-weight: bold;
   display: block;
@@ -141,15 +141,15 @@ header {
   padding: 7px 25px 7px 7px;
   line-height: 18px;
 }
-#nav ul li a span {
+nav ul li a span {
   font-size: 11px;
   font-weight: normal;
   color: #67707a;
 }
-#nav ul li a:hover {
+nav ul li a:hover {
   background: #0a151f;
 }
-#nav ul li#active a,
+nav ul li#active a,
 .content {
   float: right;
   padding: 0 0 0 0;
