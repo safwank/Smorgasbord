@@ -106,7 +106,7 @@ function downloadZipFile(callback) {
 function unzipCSVFilesIn(zipFilePath, callback) {
   sys.puts('Unzipping file: ' + zipFilePath);
   if (thisSocket) thisSocket.emit('unzipFileProgress', {
-    progress: 'Unzipping file...'
+    progress: 0
   });
 
   var zipFileName = path.basename(zipFilePath, '.zip');
@@ -120,7 +120,7 @@ function unzipCSVFilesIn(zipFilePath, callback) {
   unzip.on('exit', function(code) {
     sys.puts('Finished unzipping ' + zipFilePath);
     if (thisSocket) thisSocket.emit('unzipFileProgress', {
-      progress: 'Finished unzipping file'
+      progress: 100
     });
 
     callback(null, csvFilesPath);
@@ -166,7 +166,7 @@ function importCSVFilesIn(csvFilesPath, callback) {
 function createNodeRelationships(mainCallback) {
   sys.puts('Creating node relationships');
   if (thisSocket) thisSocket.emit('createRelationshipsProgress', {
-    progress: 'Creating node relationships...'
+    progress: 0
   });
 
   async.parallel([
@@ -177,7 +177,7 @@ function createNodeRelationships(mainCallback) {
 
     sys.puts('Finished creating node relationships');
     if (thisSocket) thisSocket.emit('createRelationshipsProgress', {
-      progress: 'Finished creating node relationships'
+      progress: 100
     });
 
     mainCallback(null);

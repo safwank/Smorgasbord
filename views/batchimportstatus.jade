@@ -1,43 +1,43 @@
-head
-   script(src='http://code.jquery.com/jquery-1.6.2.min.js')
-   script(src='/socket.io/socket.io.js')
-   script(type='text/javascript')
-      var socket = io.connect('http://localhost:3000')
-      socket.on('downloadZipFileProgress', function (data) {
-         var progress = data.progress
+p Step 1 - Download zip file 
+progress#downloadZipFileProgress(min='0', max='100', value='0') 
 
-         if (progress < 100)
-            $('#downloadZipFileProgress').text(progress.toFixed(2) + '%')
-         else
-            $('#downloadZipFileProgress').text('Finished downloading zip file')
-      })
-      socket.on('unzipFileProgress', function (data) {
-         $('#unzipFileProgress').text(data.progress);
-      })
-      socket.on('importCSVProgress', function (data) {
-         var progress = data.progress
+p Step 2 - Unzip file
+progress#unzipFileProgress(min='0', max='100', value='0') 
 
-         if (progress > 0)
-            $('#importCSVProgress').text('Importing ' + data.progress + ' nodes. This may take a few minutes.');
-         else
-            $('#importCSVProgress').text('Finished importing CSV files');
-      })
-      socket.on('createRelationshipsProgress', function (data) {
-         $('#createRelationshipsProgress').text(data.progress);
-      })
+p Step 3 - Import CSV files
+progress#importCSVProgress(max='100', value='0') 
 
-body
-   p Batch import is in progress...
-   
-   p Step 1 - Download zip file 
-   #downloadZipFileProgress 
+p Step 4 - Create relationships
+progress#createRelationshipsProgress(min='0', max='100', value='0') 
 
-   p Step 2 - Unzip file
-   #unzipFileProgress
+script(src='http://code.jquery.com/jquery-1.6.2.min.js')
+script(src='/socket.io/socket.io.js')
+script(type='text/javascript')
+  var socket = io.connect('http://localhost:3000');
+  var downloadZipFileProgress = $('#downloadZipFileProgress');
+  var unzipFileProgress = $('#unzipFileProgress');
+  var importCSVProgress = $('#importCSVProgress');
+  var createRelationshipsProgress = $('#createRelationshipsProgress');
 
-   p Step 3 - Import CSV files
-   #importCSVProgress
-
-   p Step 4 - Create relationships
-   #createRelationshipsProgress
-   
+  socket.on('downloadZipFileProgress', function (data) {
+     downloadZipFileProgress.attr('value', data.progress);
+  });
+  
+  socket.on('unzipFileProgress', function (data) {
+     unzipFileProgress.attr('value', data.progress);
+  });
+  
+  socket.on('importCSVProgress', function (data) {
+    var numberOfNodesLeftToImport = data.progress;
+    if (numberOfNodesLeftToImport == 0)
+      importCSVProgress.attr('value', 100);
+    else
+      importCSVProgress.removeAttr('value');
+  });
+  
+  socket.on('createRelationshipsProgress', function (data) {
+    if (data.progress == 100)
+      createRelationshipsProgress.attr('value', 100);
+    else
+      createRelationshipsProgress.removeAttr('value');
+  });
