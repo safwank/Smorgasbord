@@ -1,0 +1,38 @@
+body
+  section(data-route="users") Users
+  section(data-route="businesses") Businesses
+  ul
+    li
+      a(href="#/users")#/users
+    li
+      a(href="#/businesses")#/businesses
+
+script(src='http://code.jquery.com/jquery-1.6.2.min.js')
+script(src='https://raw.github.com/flatiron/director/master/build/director-1.1.3.min.js')
+script(type='text/javascript')
+  $('document').ready(function() {
+    var showUsers = function() { console.log('showUsers') };
+    var showBusinesses = function() { console.log('showBusinesses') };
+    var allroutes = function() {
+      var route = window.location.hash.slice(2),
+          sections = $('section'),
+          section;
+            
+      if ((section = sections.filter('[data-route=' + route + ']')).length) {
+        sections.hide(250);
+        section.show(250);
+      }
+    };
+
+    var routes = {
+      '/users': showUsers,
+      '/businesses': showBusinesses
+    };
+
+    var router = Router(routes);
+
+    router.configure({
+      on: allroutes
+    });
+    router.init();
+  });

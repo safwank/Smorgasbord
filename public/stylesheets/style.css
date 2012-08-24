@@ -80,7 +80,7 @@ h5 {
 #container {
   padding-top: 12px;
 }
-#header {
+header {
   position: relative;
   padding-left: 7px;
 }
@@ -172,7 +172,7 @@ h5 {
 #panel-left p {
   margin-top: 5px;
 }
-#footer {
+footer {
   clear: both;
   height: 77px;
   margin-top: 20px;
@@ -181,10 +181,10 @@ h5 {
   color: #a0a9b0;
   font-size: 90%;
 }
-#footer a {
+footer a {
   color: #a0a9b0;
 }
-#footer p {
+footer p {
   margin: 0;
   padding-top: 10px;
 }
