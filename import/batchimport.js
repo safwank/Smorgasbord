@@ -3,11 +3,17 @@ var sys = require('sys'),
   url = require('url'),
   fs = require('fs'),
   path = require('path'),
-  io = require('socket.io').listen(app),
   uuid = require('node-uuid'),
   query = require('array-query'),
   async = require('async'),
   redisUtil = require('../common/redisutil');
+
+// Socket.IO fallback to long polling for Heroku Cedar
+var io = require('socket.io').listen(app); 
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 1000); 
+});
 
 var Business = require('../models/business'),
   BusinessTaxReturn = require('../models/businesstaxreturn'),
@@ -22,7 +28,7 @@ var Business = require('../models/business'),
   Relation = require('../models/relation'),
   Stock = require('../models/stock');
 
-//TODO: Re-factor this to support multiple requests :)
+// TODO: Re-factor this to support multiple requests :)
 var thisSocket;
 io.sockets.on('connection', function(socket) {
   thisSocket = socket;
