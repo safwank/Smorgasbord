@@ -15,10 +15,10 @@ exports.getDistributionOfReferrals = function(callback) {
     var referrals = [];
 
     results.forEach(function(result) {
-      var referral = {
-        type: result['referral'].data.Type,
-        count: result['count(*)']
-      };
+      var referral = [
+        result['referral'].data.Type,
+        result['count(*)']
+      ];
       referrals.push(referral);
     });
 

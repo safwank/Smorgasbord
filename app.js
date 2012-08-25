@@ -13,7 +13,6 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.use(express.cookieParser());
   app.use(express.session({secret: "string" }));
-  //app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(require('stylus').middleware({ src: __dirname + '/public' }));
   app.use(app.router);
@@ -82,6 +81,8 @@ app.get('/upload', routes.upload.show);
 app.post('/upload', routes.upload.importCSVData);
 
 app.get('/batchimport', routes.batchimport.importCSVData);
+
+app.get('/reports', routes.reports.show);
 
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

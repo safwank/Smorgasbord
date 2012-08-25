@@ -17,3 +17,4 @@ exports.relations = require('./relations');
 
 exports.upload = require('./upload');
 exports.batchimport = require('./batchimport');
+exports.reports = require('./reports');
