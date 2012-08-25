@@ -13,7 +13,7 @@ progress#createRelationshipsProgress(min='0', max='100', value='0')
 script(src='http://code.jquery.com/jquery-1.6.2.min.js')
 script(src='/socket.io/socket.io.js')
 script(type='text/javascript')
-  var socket = io.connect('http://localhost:3000');
+  var socket = io.connect(window.location.hostname);
   var downloadZipFileProgress = $('#downloadZipFileProgress');
   var unzipFileProgress = $('#unzipFileProgress');
   var importCSVProgress = $('#importCSVProgress');
