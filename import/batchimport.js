@@ -119,7 +119,7 @@ function unzipCSVFilesIn(zipFilePath, callback) {
   var csvFilesPath = path.join(FILE_DROP, zipFileName);
 
   var spawn = require('child_process').spawn;
-  var unzip = spawn('unzip', [zipFilePath, '-d', csvFilesPath]);
+  var unzip = spawn('tools/unzip', [zipFilePath, '-d', csvFilesPath]);
 
   unzip.stdout.on('data', function(data) {});
   unzip.stderr.on('data', function(data) {});
@@ -131,6 +131,27 @@ function unzipCSVFilesIn(zipFilePath, callback) {
 
     callback(null, csvFilesPath);
   });
+  
+  /*
+  fs.mkdirSync(csvFilesPath);
+  var zipFileContent = fs.readFileSync(zipFilePath, 'utf8');
+  var zip = new require('node-zip')(zipFileContent, {base64: false, checkCRC32: true});
+
+  zip.files.forEach(function(file) {
+    sys.puts(file.name);
+    var uncompressed = path.join(csvFilesPath, file.name);
+    var buffer = file.content;
+    var fd = fs.openSync(uncompressed, 'w');
+    fs.writeSync(fd, buffer, 0, buffer.length, null);
+    fs.closeSync(fd);
+  });
+
+  sys.puts('Finished unzipping ' + zipFilePath);
+  if (thisSocket) thisSocket.emit('unzipFileProgress', {
+    progress: 100
+  });
+
+  callback(null, csvFilesPath);*/
 }
 
 function importCSVFilesIn(csvFilesPath, callback) {
