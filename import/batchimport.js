@@ -11,8 +11,8 @@ var sys = require('sys'),
 // Socket.IO fallback to long polling for Heroku Cedar
 var io = require('socket.io').listen(app); 
 io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 1000); 
+  io.set('transports', ['xhr-polling']); 
+  io.set('polling duration', 10000); 
 });
 
 var Business = require('../models/business'),
