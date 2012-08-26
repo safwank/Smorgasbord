@@ -1,6 +1,13 @@
-// TODO: Switch between local Redis and Redis To Go (Heroku)
-var redis = require('redis'),
-  redisClient = redis.createClient();
+var redis, redisClient;
+
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require('url').parse(process.env.REDISTOGO_URL);
+  redisClient = require('redis').createClient(rtg.port, rtg.hostname);
+
+  redisClient.auth(rtg.auth.split(':')[1]);
+} else {
+  redisClient = require('redis').createClient();
+}
 
 var TOTAL_NODES_KEY = 'total_nodes_imported';
 
