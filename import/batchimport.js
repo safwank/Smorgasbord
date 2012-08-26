@@ -35,7 +35,7 @@ io.sockets.on('connection', function(socket) {
 });
 
 // Constants
-var FILE_DROP = 'temp';
+var FILE_DROP = 'tmp';
 var FILE_EXTENSION = '.zip';
 
 // Public methods
