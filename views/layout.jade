@@ -11,7 +11,9 @@ html
             | Smor
             span.light gasbord
             span.leaf  
+      
       hr.noscreen
+      
       p.noscreen.noprint
         em
           | Skip to
@@ -19,35 +21,12 @@ html
           | ,
           a(href='#nav') navigation
           | .
+      
       hr.noscreen
-      nav.box
-        ul
-          li
-            a(href='/')
-              | Home
-              br
-              span Main page
-          li
-            a(href='/batchimport')
-              | Import
-              br
-              span Import data
-          li
-            a(href='/reports')
-              | Reports
-              br
-              span Graphs and charts
-          li
-            a(href='/admin')
-              | Admin
-              br
-              span Site administration
-          li
-            a(href='/')
-              | Contact
-              br
-              span Stalk me
-        hr.noscreen
+      
+      nav.box!= partial('navigation.jade')
+        
+      hr.noscreen
 
       section!= body
       

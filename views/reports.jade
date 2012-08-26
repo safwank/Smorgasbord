@@ -6,15 +6,15 @@ section.box
   #panel-left.box.panel
     .in
       p
-        span.report(data-name='referrals', data-type='pie') Distribution of referrals
+        span.report.clickable(data-name='referrals', data-type='pie') Distribution of referrals
       p
-        span.report(data-name='partners', data-type='pie') Distribution of partners
+        span.report.clickable(data-name='partners', data-type='pie') Distribution of partners
       p
-        span.report(data-name='businesses', data-type='bar') Top businesses by revenue
+        span.report.clickable(data-name='businesses', data-type='bar') Top businesses by revenue
       p
-        span.report(data-name='individuals', data-type='bar') Top individuals by income
+        span.report.clickable(data-name='individuals', data-type='bar') Top individuals by income
       p
-        span.report(data-name='states', data-type='geo') Top states by businesses
+        span.report.clickable(data-name='states', data-type='geo') Top states by businesses
 
 script(type='text/javascript', src='https://www.google.com/jsapi')
 script(src='http://code.jquery.com/jquery-1.6.2.min.js') 

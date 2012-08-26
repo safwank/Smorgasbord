@@ -349,3 +349,6 @@ tr.a-right td {
 .foto {
   display: block;
 }
+span.clickable {
+  cursor: pointer;
+}
