@@ -119,7 +119,7 @@ function unzipCSVFilesIn(zipFilePath, callback) {
   var csvFilesPath = path.join(FILE_DROP, zipFileName);
 
   var spawn = require('child_process').spawn;
-  var unzip = spawn('tools/unzip', [zipFilePath, '-d', csvFilesPath]);
+  var unzip = spawn('unzip', [zipFilePath, '-d', csvFilesPath]);
 
   unzip.stdout.on('data', function(data) {});
   unzip.stderr.on('data', function(data) {
