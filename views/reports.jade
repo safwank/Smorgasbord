@@ -17,7 +17,7 @@ section.box
         span.report(data-name='states', data-type='geo') Top states by businesses
 
 script(type='text/javascript', src='https://www.google.com/jsapi')
-script(src='http://code.jquery.com/jquery-1.6.2.min.js')
+script(src='http://code.jquery.com/jquery-1.6.2.min.js') 
 script(type='text/javascript')
   google.load('visualization', '1', {packages:['corechart', 'geochart']});
   google.setOnLoadCallback(drawChart);
@@ -110,6 +110,9 @@ script(type='text/javascript')
   }
 
   $('.report').click(function() {
+    $('.report').css('text-decoration', '');
+    $(this).css('text-decoration', 'underline');
+
     var chartName = $(this).data('name');
     var chartTitle = $(this).text();
     var chartType = $(this).data('type');
