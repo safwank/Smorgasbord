@@ -1,130 +1,133 @@
-section.box
-  #obsah.content.box
-    .in
-      #chart
-      
-  #panel-left.box.panel
-    .in
-      p
-        span.report.clickable(data-name='referrals', data-type='pie') Distribution of referrals
-      p
-        span.report.clickable(data-name='partners', data-type='pie') Distribution of partners
-      p
-        span.report.clickable(data-name='businesses', data-type='bar') Top businesses by revenue
-      p
-        span.report.clickable(data-name='individuals', data-type='bar') Top individuals by income
-      p
-        span.report.clickable(data-name='states', data-type='geo') Top states by businesses
+extends layout
 
-script(type='text/javascript', src='https://www.google.com/jsapi')
-script(src='http://code.jquery.com/jquery-1.6.2.min.js') 
-script(type='text/javascript')
-  google.load('visualization', '1', {packages:['corechart', 'geochart']});
-  google.setOnLoadCallback(drawChart);
-  var chartArea = document.getElementById('chart');
-  
-  function drawChart(event, options) {
-    defaultOptions = {
-      chartName: 'referrals',
-      chartTitle: 'Distribution of referrals',
-      chartType: 'pie'
-    };
+block content
+  section.box
+    #obsah.content.box
+      .in
+        #chart
+        
+    #panel-left.box.panel
+      .in
+        p
+          span.report.clickable(data-name='referrals', data-type='pie') Distribution of referrals
+        p
+          span.report.clickable(data-name='partners', data-type='pie') Distribution of partners
+        p
+          span.report.clickable(data-name='businesses', data-type='bar') Top businesses by revenue
+        p
+          span.report.clickable(data-name='individuals', data-type='bar') Top individuals by income
+        p
+          span.report.clickable(data-name='states', data-type='geo') Top states by businesses
 
-    if (typeof options == 'object') {
-      options = $.extend(defaultOptions, options);
-    } else {
-      options = defaultOptions;
-    } 
+block append scripts
+  script(type='text/javascript', src='https://www.google.com/jsapi')
+  script(type='text/javascript')
+    google.load('visualization', '1', {packages:['corechart', 'geochart']});
+    google.setOnLoadCallback(drawChart);
+    var chartArea = document.getElementById('chart');
     
-    var reportUrl = '/reports/' + options.chartName;
-    var responseData = $.ajax({
-      url: reportUrl,
-      dataType: 'json',
-      async: false
-    }).responseText;
-    var reportData = JSON.parse(responseData);
-    var data = google.visualization.arrayToDataTable(reportData);
+    function drawChart(event, options) {
+      defaultOptions = {
+        chartName: 'referrals',
+        chartTitle: 'Distribution of referrals',
+        chartType: 'pie'
+      };
 
-    switch (options.chartType) {
-      case 'pie':
-        var googleOptions = getGoogleOptions(options);  
-        var chart = new google.visualization.PieChart(chartArea);
-        chart.draw(data, googleOptions);
-        break;
-      case 'bar':
-        var googleOptions = getGoogleOptions(options);  
-        googleOptions.legend.position = 'none';
-        var chart = new google.visualization.BarChart(chartArea);
-        chart.draw(data, googleOptions);
-        break;
-      case 'geo':
-        var geoOptions = {
-          region: 'AU',
-          resolution: 'provinces',
-          displayMode: 'markers',
-          backgroundColor: 'transparent'
-        };
-        var chart = new google.visualization.GeoChart(chartArea);
-        chart.draw(data, geoOptions);
+      if (typeof options == 'object') {
+        options = $.extend(defaultOptions, options);
+      } else {
+        options = defaultOptions;
+      } 
+      
+      var reportUrl = '/reports/' + options.chartName;
+      var responseData = $.ajax({
+        url: reportUrl,
+        dataType: 'json',
+        async: false
+      }).responseText;
+      var reportData = JSON.parse(responseData);
+      var data = google.visualization.arrayToDataTable(reportData);
+
+      switch (options.chartType) {
+        case 'pie':
+          var googleOptions = getGoogleOptions(options);  
+          var chart = new google.visualization.PieChart(chartArea);
+          chart.draw(data, googleOptions);
+          break;
+        case 'bar':
+          var googleOptions = getGoogleOptions(options);  
+          googleOptions.legend.position = 'none';
+          var chart = new google.visualization.BarChart(chartArea);
+          chart.draw(data, googleOptions);
+          break;
+        case 'geo':
+          var geoOptions = {
+            region: 'AU',
+            resolution: 'provinces',
+            displayMode: 'markers',
+            backgroundColor: 'transparent'
+          };
+          var chart = new google.visualization.GeoChart(chartArea);
+          chart.draw(data, geoOptions);
+      }
     }
-  }
 
-  function getGoogleOptions(options) {
-    var googleOptions = {
-      title: options.chartTitle,
-      titleTextStyle: {
-        color: 'white'
-      },
-      legend: {
-        textStyle: {
-          color: 'white'
-        }
-      },
-      backgroundColor: 'transparent',
-      vAxis: {
+    function getGoogleOptions(options) {
+      var googleOptions = {
+        title: options.chartTitle,
         titleTextStyle: {
           color: 'white'
         },
-        textStyle: {
-          color: 'white'
+        legend: {
+          textStyle: {
+            color: 'white'
+          }
         },
-        textPosition: 'in'
-      },
-      hAxis: {
-        titleTextStyle: {
-          color: 'white'
+        backgroundColor: 'transparent',
+        vAxis: {
+          titleTextStyle: {
+            color: 'white'
+          },
+          textStyle: {
+            color: 'white'
+          },
+          textPosition: 'in'
         },
-        textStyle: {
-          color: 'white'
-        }
-      },
-      chartArea: {
-        width: '100%',
-        height: '80%'
-      },
-      animation: {
-        duration: 1000,
-        easing: 'out',
-      },
-    };
-    return googleOptions;
-  }
+        hAxis: {
+          titleTextStyle: {
+            color: 'white'
+          },
+          textStyle: {
+            color: 'white'
+          }
+        },
+        chartArea: {
+          width: '100%',
+          height: '80%'
+        },
+        animation: {
+          duration: 1000,
+          easing: 'out',
+        },
+      };
+      return googleOptions;
+    }
 
-  $('.report').click(function() {
-    $('#chart').fadeOut('fast');
+    $('.report').click(function() {
+      $('#chart').fadeOut('fast');
 
-    $('.report').css('text-decoration', '');
-    $(this).css('text-decoration', 'underline');
+      $('.report').css('text-decoration', '');
+      $(this).css('text-decoration', 'underline');
 
-    var chartName = $(this).data('name');
-    var chartTitle = $(this).text();
-    var chartType = $(this).data('type');
+      var chartName = $(this).data('name');
+      var chartTitle = $(this).text();
+      var chartType = $(this).data('type');
 
-    drawChart(null, { 
-      chartName: chartName, 
-      chartTitle: chartTitle, 
-      chartType: chartType 
+      drawChart(null, { 
+        chartName: chartName, 
+        chartTitle: chartTitle, 
+        chartType: chartType 
+      });
+
+      $('#chart').fadeIn('fast');
     });
-
-    $('#chart').fadeIn('fast');
-  });

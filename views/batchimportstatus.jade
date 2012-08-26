@@ -1,43 +1,47 @@
-p Step 1 - Download zip file 
-progress#downloadZipFileProgress(min='0', max='100', value='0') 
+extends layout
 
-p Step 2 - Unzip file
-progress#unzipFileProgress(min='0', max='100', value='0') 
+block content
+  section.box
+    p Step 1 - Download zip file 
+    progress#downloadZipFileProgress(min='0', max='100', value='0') 
 
-p Step 3 - Import CSV files
-progress#importCSVProgress(max='100', value='0') 
+    p Step 2 - Unzip file
+    progress#unzipFileProgress(min='0', max='100', value='0') 
 
-p Step 4 - Create relationships
-progress#createRelationshipsProgress(min='0', max='100', value='0') 
+    p Step 3 - Import CSV files
+    progress#importCSVProgress(max='100', value='0') 
 
-script(src='http://code.jquery.com/jquery-1.6.2.min.js')
-script(src='/socket.io/socket.io.js')
-script(type='text/javascript')
-  var socket = io.connect(window.location.hostname);
-  var downloadZipFileProgress = $('#downloadZipFileProgress');
-  var unzipFileProgress = $('#unzipFileProgress');
-  var importCSVProgress = $('#importCSVProgress');
-  var createRelationshipsProgress = $('#createRelationshipsProgress');
+    p Step 4 - Create relationships
+    progress#createRelationshipsProgress(min='0', max='100', value='0') 
 
-  socket.on('downloadZipFileProgress', function (data) {
-     downloadZipFileProgress.attr('value', data.progress);
-  });
-  
-  socket.on('unzipFileProgress', function (data) {
-     unzipFileProgress.attr('value', data.progress);
-  });
-  
-  socket.on('importCSVProgress', function (data) {
-    var numberOfNodesLeftToImport = data.progress;
-    if (numberOfNodesLeftToImport == 0)
-      importCSVProgress.attr('value', 100);
-    else
-      importCSVProgress.removeAttr('value');
-  });
-  
-  socket.on('createRelationshipsProgress', function (data) {
-    if (data.progress == 100)
-      createRelationshipsProgress.attr('value', 100);
-    else
-      createRelationshipsProgress.removeAttr('value');
-  });
+block append scripts
+  script(src='/socket.io/socket.io.js')
+  script(type='text/javascript')
+    var socket = io.connect(window.location.hostname);
+    var downloadZipFileProgress = $('#downloadZipFileProgress');
+    var unzipFileProgress = $('#unzipFileProgress');
+    var importCSVProgress = $('#importCSVProgress');
+    var createRelationshipsProgress = $('#createRelationshipsProgress');
+
+    socket.on('downloadZipFileProgress', function (data) {
+       downloadZipFileProgress.attr('value', data.progress);
+    });
+    
+    socket.on('unzipFileProgress', function (data) {
+       unzipFileProgress.attr('value', data.progress);
+    });
+    
+    socket.on('importCSVProgress', function (data) {
+      var numberOfNodesLeftToImport = data.progress;
+      if (numberOfNodesLeftToImport == 0)
+        importCSVProgress.attr('value', 100);
+      else
+        importCSVProgress.removeAttr('value');
+    });
+    
+    socket.on('createRelationshipsProgress', function (data) {
+      if (data.progress == 100)
+        createRelationshipsProgress.attr('value', 100);
+      else
+        createRelationshipsProgress.removeAttr('value');
+    });
