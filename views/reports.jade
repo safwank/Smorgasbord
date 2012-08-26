@@ -6,29 +6,43 @@ section.box
   #panel-left.box.panel
     .in
       p
-        span Distribution of referrals
+        span.report(data-type='referrals') Distribution of referrals
       p
-        span Distribution of partners
+        span.report(data-type='partners') Distribution of partners
       p
-        span Top businesses by revenue
+        span.report(data-type='businesses') Top businesses by revenue
       p
-        span Top individuals by income
+        span.report(data-type='individuals') Top individuals by income
 
 script(type='text/javascript', src='https://www.google.com/jsapi')
+script(src='http://code.jquery.com/jquery-1.6.2.min.js')
 script(type='text/javascript')
-  google.load("visualization", "1", {packages:["corechart"]});
+  google.load('visualization', '1', {packages:['corechart']});
   google.setOnLoadCallback(drawChart);
 
-  function drawChart() {
-    var reportData = !{JSON.stringify(reportData)};
-    var data = google.visualization.arrayToDataTable(reportData);
+  function drawChart(event, chartType, chartTitle) {
+    if (!chartType) chartType = 'referrals';
+    if (!chartTitle) chartTitle = 'Distribution of referrals';
 
+    var reportUrl = '/reports/' + chartType;
+    var responseData = $.ajax({
+      url: reportUrl,
+      dataType: 'json',
+      async: false
+    }).responseText;
+
+    var reportData = JSON.parse(responseData);
+    var data = google.visualization.arrayToDataTable(reportData);
     var options = {
-      title: 'Distribution of referrals'
+      title: chartTitle
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('chart'));
     chart.draw(data, options);
   }
 
-
+  $('.report').click(function() {
+    var chartType = $(this).data('type');
+    var chartTitle = $(this).text();
+    drawChart(null, chartType, chartTitle);
+  });

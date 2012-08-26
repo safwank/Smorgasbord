@@ -83,6 +83,7 @@ app.post('/upload', routes.upload.importCSVData);
 app.get('/batchimport', routes.batchimport.importCSVData);
 
 app.get('/reports', routes.reports.show);
+app.get('/reports/:id', routes.reports.generate);
 
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

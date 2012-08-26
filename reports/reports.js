@@ -40,10 +40,10 @@ exports.getDistributionOfPartners = function(callback) {
 
     results.forEach(function(result) {
       var resultData = result['partner'].data;
-      var partner = {
-        name: resultData.FirstName + ' ' + resultData.LastName,
-        count: result['count(*)']
-      };
+      var partner = [
+        resultData.FirstName + ' ' + resultData.LastName,
+        result['count(*)']
+      ];
       partners.push(partner);
     });
 
