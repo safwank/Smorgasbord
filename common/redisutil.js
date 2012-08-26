@@ -1,12 +1,13 @@
 var redis, redisClient;
 
 if (process.env.REDISTOGO_URL) {
-  var rtg   = require('url').parse(process.env.REDISTOGO_URL);
-  redisClient = require('redis').createClient(rtg.port, rtg.hostname);
+  redis = require('url').parse(process.env.REDISTOGO_URL);
+  redisClient = require('redis').createClient(redis.port, redis.hostname);
 
-  redisClient.auth(rtg.auth.split(':')[1]);
+  redisClient.auth(redis.auth.split(':')[1]);
 } else {
-  redisClient = require('redis').createClient();
+  redis = require('redis');
+  redisClient = redis.createClient();
 }
 
 var TOTAL_NODES_KEY = 'total_nodes_imported';
