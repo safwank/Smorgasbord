@@ -78,9 +78,6 @@ app.get('/datainit/referral', routes.datainit.loadReferral);
 app.get('/datainit/financialyear', routes.datainit.loadFinancialYear);
 app.get('/datainit/relation', routes.datainit.loadRelation);
 
-app.get('/upload', routes.upload.show);
-app.post('/upload', routes.upload.importCSVData);
-
 app.get('/batchimport', routes.batchimport.importCSVData);
 
 app.get('/reports', routes.reports.show);
