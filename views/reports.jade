@@ -33,39 +33,7 @@ script(type='text/javascript')
       options = defaultOptions;
     } 
     
-    var googleOptions = {
-      title: options.chartTitle, 
-      titleTextStyle: {
-        color: 'white'
-      },
-      legend: {
-        textStyle: {
-          color: 'white'
-        }
-      },
-      backgroundColor: 'transparent',
-      vAxis: { 
-        titleTextStyle: {
-          color: 'white'
-        },
-        textStyle: {
-          color: 'white'
-        }
-      },
-      hAxis: { 
-        titleTextStyle: {
-          color: 'white'
-        },
-        textStyle: {
-          color: 'white'
-        }
-      }, 
-      animation:{
-        duration: 1000,
-        easing: 'out',
-      },
-    };  
-
+    var googleOptions = getGoogleOptions(options);  
     var reportUrl = '/reports/' + options.chartName;
     var responseData = $.ajax({
       url: reportUrl,
@@ -86,6 +54,47 @@ script(type='text/javascript')
         chart.draw(data, googleOptions);
         break;
     }
+  }
+
+  function getGoogleOptions(options) {
+    var googleOptions = {
+      title: options.chartTitle,
+      titleTextStyle: {
+        color: 'white'
+      },
+      legend: {
+        textStyle: {
+          color: 'white'
+        }
+      },
+      backgroundColor: 'transparent',
+      vAxis: {
+        titleTextStyle: {
+          color: 'white'
+        },
+        textStyle: {
+          color: 'white'
+        },
+        textPosition: 'in'
+      },
+      hAxis: {
+        titleTextStyle: {
+          color: 'white'
+        },
+        textStyle: {
+          color: 'white'
+        }
+      },
+      chartArea: {
+        width: '100%',
+        height: '80%'
+      },
+      animation: {
+        duration: 1000,
+        easing: 'out',
+      },
+    };
+    return googleOptions;
   }
 
   $('.report').click(function() {
