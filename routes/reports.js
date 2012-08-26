@@ -1,4 +1,5 @@
-var reports = require('../reports/reports');
+var reports = require('../reports/reports'),
+  sys = require('sys');
 
 // GET /reports
 exports.show = function(request, response, next) {

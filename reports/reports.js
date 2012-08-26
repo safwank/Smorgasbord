@@ -55,17 +55,23 @@ exports.getTopBusinessesByRevenue = function(callback) {
   var query = [
     'START business=node:nodes(type="business")',
     'MATCH business-[rel:HAS_A]->taxReturn',
-    'RETURN business.Name AS name, taxReturn.Revenue as revenue',
+    'RETURN business.Name AS name, taxReturn.Revenue AS revenue',
     'ORDER BY length(taxReturn.Revenue) DESC, taxReturn.Revenue DESC LIMIT 10'
   ].join('\n');
 
   db.query(query, null, function(error, results) {
     if (error) return callback(error);
-
-    var businesses = [];
+    
+    var businesses = [
+      ['Name', 'Revenue']
+    ];
 
     results.forEach(function(result) {
-      businesses.push(result);
+      var business = [
+        result.name, 
+        parseInt(result.revenue)
+      ];
+      businesses.push(business);
     });
 
     return callback(null, businesses);
@@ -76,17 +82,23 @@ exports.getTopIndividualsByIncome = function(callback) {
   var query = [
     'START individual=node:nodes(type="individual")',
     'MATCH individual-[rel:HAS_A]->taxReturn',
-    'RETURN individual.FirstName AS firstName, individual.LastName as lastName, taxReturn.Income as income',
+    'RETURN individual.FirstName AS firstName, individual.LastName AS lastName, taxReturn.Income AS income',
     'ORDER BY length(taxReturn.Income) DESC, taxReturn.Income DESC LIMIT 10'
   ].join('\n');
 
   db.query(query, null, function(error, results) {
     if (error) return callback(error);
 
-    var individuals = [];
+    var individuals = [
+      ['Name', 'Income']
+    ];
 
     results.forEach(function(result) {
-      individuals.push(result);
+      var individual = [
+        result.firstName + ' ' + result.lastName,
+        parseFloat(result.income)
+      ];
+      individuals.push(individual);
     });
 
     return callback(null, individuals);

@@ -6,43 +6,91 @@ section.box
   #panel-left.box.panel
     .in
       p
-        span.report(data-type='referrals') Distribution of referrals
+        span.report(data-name='referrals', data-type='pie') Distribution of referrals
       p
-        span.report(data-type='partners') Distribution of partners
+        span.report(data-name='partners', data-type='pie') Distribution of partners
       p
-        span.report(data-type='businesses') Top businesses by revenue
+        span.report(data-name='businesses', data-type='bar') Top businesses by revenue
       p
-        span.report(data-type='individuals') Top individuals by income
+        span.report(data-name='individuals', data-type='bar') Top individuals by income
 
 script(type='text/javascript', src='https://www.google.com/jsapi')
 script(src='http://code.jquery.com/jquery-1.6.2.min.js')
 script(type='text/javascript')
   google.load('visualization', '1', {packages:['corechart']});
   google.setOnLoadCallback(drawChart);
+  
+  function drawChart(event, options) {
+    defaultOptions = {
+      chartName: 'referrals',
+      chartTitle: 'Distribution of referrals',
+      chartType: 'pie'
+    };
 
-  function drawChart(event, chartType, chartTitle) {
-    if (!chartType) chartType = 'referrals';
-    if (!chartTitle) chartTitle = 'Distribution of referrals';
+    if (typeof options == 'object') {
+      options = $.extend(defaultOptions, options);
+    } else {
+      options = defaultOptions;
+    } 
+    
+    var googleOptions = {
+      title: options.chartTitle, /*
+      titleTextStyle: {
+        color: 'white'
+      },
+      legend: {
+        textStyle: {
+          color: 'white'
+        }
+      },
+      backgroundColor: 'transparent',
+      vAxis: { 
+        titleTextStyle: {
+          color: 'white'
+        }
+      },
+      hAxis: { 
+        titleTextStyle: {
+          color: 'white'
+        }
+      }, */
+      legend: {},
+      animation:{
+        duration: 1000,
+        easing: 'out',
+      },
+    };  
 
-    var reportUrl = '/reports/' + chartType;
+    var reportUrl = '/reports/' + options.chartName;
     var responseData = $.ajax({
       url: reportUrl,
       dataType: 'json',
       async: false
     }).responseText;
-
     var reportData = JSON.parse(responseData);
     var data = google.visualization.arrayToDataTable(reportData);
-    var options = {
-      title: chartTitle
-    };
 
-    var chart = new google.visualization.PieChart(document.getElementById('chart'));
-    chart.draw(data, options);
+    switch (options.chartType) {
+      case 'pie':
+        var chart = new google.visualization.PieChart(document.getElementById('chart'));
+        chart.draw(data, googleOptions);
+        break;
+      case 'bar':
+        googleOptions.legend.position = 'none';
+        var chart = new google.visualization.BarChart(document.getElementById('chart'));
+        chart.draw(data, googleOptions);
+        break;
+    }
   }
 
   $('.report').click(function() {
-    var chartType = $(this).data('type');
+    var chartName = $(this).data('name');
     var chartTitle = $(this).text();
-    drawChart(null, chartType, chartTitle);
+    var chartType = $(this).data('type');
+
+    drawChart(null, { 
+      chartName: chartName, 
+      chartTitle: chartTitle, 
+      chartType: chartType 
+    });
   });
