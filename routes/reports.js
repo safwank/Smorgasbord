@@ -3,7 +3,9 @@ var reports = require('../reports/reports'),
 
 // GET /reports
 exports.show = function(request, response, next) {
-  response.render('reports');
+  response.render('reports', {
+    page: 'reports'
+  });
 };
 
 // GET /reports/:id

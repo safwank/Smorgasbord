@@ -6,5 +6,7 @@ exports.importCSVData = function(request, response, next) {
     if (error) return next(error);
   });
 
-  response.render('batchimportstatus');
+  response.render('batchimportstatus', {
+    page: 'import'
+  });
 };
