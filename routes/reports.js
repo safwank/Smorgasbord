@@ -47,5 +47,14 @@ exports.generate = function(request, response, next) {
         response.end('\n');
       });
       break;
+    case 'states':
+      reports.getTopStatesByBusinesses(function(error, states) {
+        if (error) return next(error);
+
+        response.writeHead(200, {'content-type': 'text/json' });
+        response.write(JSON.stringify(states));
+        response.end('\n');
+      });
+      break;
   }
 };

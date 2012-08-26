@@ -104,3 +104,28 @@ exports.getTopIndividualsByIncome = function(callback) {
     return callback(null, individuals);
   });
 };
+
+exports.getTopStatesByBusinesses = function(callback) {
+  var query = [
+    'START business=node:nodes(type="business")',
+    'RETURN business.State AS state, count(*) AS businesses'
+  ].join('\n');
+
+  db.query(query, null, function(error, results) {
+    if (error) return callback(error);
+
+    var states = [
+      ['State', 'Businesses']
+    ];
+
+    results.forEach(function(result) {
+      var state = [
+        result.state,
+        parseInt(result.businesses)
+      ];
+      states.push(state);
+    });
+
+    return callback(null, states);
+  });
+};

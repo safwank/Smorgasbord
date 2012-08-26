@@ -13,11 +13,13 @@ section.box
         span.report(data-name='businesses', data-type='bar') Top businesses by revenue
       p
         span.report(data-name='individuals', data-type='bar') Top individuals by income
+      p
+        span.report(data-name='states', data-type='geo') Top states by businesses
 
 script(type='text/javascript', src='https://www.google.com/jsapi')
 script(src='http://code.jquery.com/jquery-1.6.2.min.js')
 script(type='text/javascript')
-  google.load('visualization', '1', {packages:['corechart']});
+  google.load('visualization', '1', {packages:['corechart', 'geochart']});
   google.setOnLoadCallback(drawChart);
   
   function drawChart(event, options) {
@@ -33,7 +35,6 @@ script(type='text/javascript')
       options = defaultOptions;
     } 
     
-    var googleOptions = getGoogleOptions(options);  
     var reportUrl = '/reports/' + options.chartName;
     var responseData = $.ajax({
       url: reportUrl,
@@ -45,14 +46,25 @@ script(type='text/javascript')
 
     switch (options.chartType) {
       case 'pie':
+        var googleOptions = getGoogleOptions(options);  
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
         chart.draw(data, googleOptions);
         break;
       case 'bar':
+        var googleOptions = getGoogleOptions(options);  
         googleOptions.legend.position = 'none';
         var chart = new google.visualization.BarChart(document.getElementById('chart'));
         chart.draw(data, googleOptions);
         break;
+      case 'geo':
+        var geoOptions = {
+          region: 'AU',
+          resolution: 'provinces',
+          displayMode: 'markers',
+          backgroundColor: 'transparent'
+        };
+        var chart = new google.visualization.GeoChart(document.getElementById('chart'));
+        chart.draw(data, geoOptions);
     }
   }
 
