@@ -1,6 +1,6 @@
 { "name": "Smorgasbord"
   , "description": "MYOB coding co-opetition"
-  , "version": "0.0.1"
+  , "version": "0.1.0"
   , "author": "Safwan Kamarrudin <shaihulud@alumni.cmu.edu>"
   , "private": true
   , "dependencies":
@@ -8,13 +8,14 @@
     , "jade": "~0.26.1"
     , "neo4j": "~0.2.12"
     , "stylus": "~0.27.1"
+    , "npm": "~1.1.49"
   }
   , "devDependencies":
     { "node-dev": "~0.2.3"
   }
   , "engines":
-    { "node": "0.6.x"
-    , "npm": "1.1.x"
+    { "node": "~0.8.4"
+    , "npm": "~1.1.49"
   }
   , "scripts":
     { "start": "node-dev app.js"
