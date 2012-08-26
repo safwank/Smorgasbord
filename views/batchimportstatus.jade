@@ -17,31 +17,34 @@ block content
 block append scripts
   script(src='/socket.io/socket.io.js')
   script(type='text/javascript')
-    var socket = io.connect(window.location.hostname);
-    var downloadZipFileProgress = $('#downloadZipFileProgress');
-    var unzipFileProgress = $('#unzipFileProgress');
-    var importCSVProgress = $('#importCSVProgress');
-    var createRelationshipsProgress = $('#createRelationshipsProgress');
+    $(document).ready(function() {
+      var socket = io.connect(window.location.hostname);
+      var downloadZipFileProgress = $('#downloadZipFileProgress');
+      var unzipFileProgress = $('#unzipFileProgress');
+      var importCSVProgress = $('#importCSVProgress');
+      var createRelationshipsProgress = $('#createRelationshipsProgress');
 
-    socket.on('downloadZipFileProgress', function (data) {
-       downloadZipFileProgress.attr('value', data.progress);
+      socket.on('downloadZipFileProgress', function (data) {
+         downloadZipFileProgress.attr('value', data.progress);
+      });
+      
+      socket.on('unzipFileProgress', function (data) {
+         unzipFileProgress.attr('value', data.progress);
+      });
+      
+      socket.on('importCSVProgress', function (data) {
+        var numberOfNodesLeftToImport = data.progress;
+        if (numberOfNodesLeftToImport == 0)
+          importCSVProgress.attr('value', 100);
+        else
+          importCSVProgress.removeAttr('value');
+      });
+      
+      socket.on('createRelationshipsProgress', function (data) {
+        if (data.progress == 100)
+          createRelationshipsProgress.attr('value', 100);
+        else
+          createRelationshipsProgress.removeAttr('value');
+      });
     });
     
-    socket.on('unzipFileProgress', function (data) {
-       unzipFileProgress.attr('value', data.progress);
-    });
-    
-    socket.on('importCSVProgress', function (data) {
-      var numberOfNodesLeftToImport = data.progress;
-      if (numberOfNodesLeftToImport == 0)
-        importCSVProgress.attr('value', 100);
-      else
-        importCSVProgress.removeAttr('value');
-    });
-    
-    socket.on('createRelationshipsProgress', function (data) {
-      if (data.progress == 100)
-        createRelationshipsProgress.attr('value', 100);
-      else
-        createRelationshipsProgress.removeAttr('value');
-    });
