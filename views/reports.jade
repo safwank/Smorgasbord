@@ -21,6 +21,7 @@ script(src='http://code.jquery.com/jquery-1.6.2.min.js')
 script(type='text/javascript')
   google.load('visualization', '1', {packages:['corechart', 'geochart']});
   google.setOnLoadCallback(drawChart);
+  var chartArea = document.getElementById('chart');
   
   function drawChart(event, options) {
     defaultOptions = {
@@ -47,13 +48,13 @@ script(type='text/javascript')
     switch (options.chartType) {
       case 'pie':
         var googleOptions = getGoogleOptions(options);  
-        var chart = new google.visualization.PieChart(document.getElementById('chart'));
+        var chart = new google.visualization.PieChart(chartArea);
         chart.draw(data, googleOptions);
         break;
       case 'bar':
         var googleOptions = getGoogleOptions(options);  
         googleOptions.legend.position = 'none';
-        var chart = new google.visualization.BarChart(document.getElementById('chart'));
+        var chart = new google.visualization.BarChart(chartArea);
         chart.draw(data, googleOptions);
         break;
       case 'geo':
@@ -63,7 +64,7 @@ script(type='text/javascript')
           displayMode: 'markers',
           backgroundColor: 'transparent'
         };
-        var chart = new google.visualization.GeoChart(document.getElementById('chart'));
+        var chart = new google.visualization.GeoChart(chartArea);
         chart.draw(data, geoOptions);
     }
   }
@@ -110,6 +111,8 @@ script(type='text/javascript')
   }
 
   $('.report').click(function() {
+    $('#chart').fadeOut('fast');
+
     $('.report').css('text-decoration', '');
     $(this).css('text-decoration', 'underline');
 
@@ -122,4 +125,6 @@ script(type='text/javascript')
       chartTitle: chartTitle, 
       chartType: chartType 
     });
+
+    $('#chart').fadeIn('fast');
   });
