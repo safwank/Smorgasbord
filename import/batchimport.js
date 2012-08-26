@@ -122,7 +122,9 @@ function unzipCSVFilesIn(zipFilePath, callback) {
   var unzip = spawn('tools/unzip', [zipFilePath, '-d', csvFilesPath]);
 
   unzip.stdout.on('data', function(data) {});
-  unzip.stderr.on('data', function(data) {});
+  unzip.stderr.on('data', function(data) {
+    sys.puts('Error: ' + data);
+  });
   unzip.on('exit', function(code) {
     sys.puts('Finished unzipping ' + zipFilePath);
     if (thisSocket) thisSocket.emit('unzipFileProgress', {
